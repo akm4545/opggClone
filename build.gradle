@@ -29,6 +29,12 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+    // jpa query log
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.8'
+
+    //h2
+    runtimeOnly 'com.h2database:h2'
+
     //GSON
     implementation 'com.google.code.gson:gson:2.9.0'
 
