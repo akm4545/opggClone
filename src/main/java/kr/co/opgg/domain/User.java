@@ -42,11 +42,15 @@ public class User extends Date {
     private List<Ad> ads = new ArrayList<>();
 
     @Builder
-    public User (String userId, String userPw, String userNickName, String userPolicyYn, Authority authority){
+    public User (String userId, String userPw, String userNickName, String userPolicyYn, Authority authority, List<Ad> ads){
         this.userId = userId;
         this.userPw = userPw;
         this.userNickName = userNickName;
         this.userPolicyYn = userPolicyYn;
         this.authority = authority;
+        if(authority.getUser() != this){
+            authority.setUser(this);
+        }
+        this.ads = ads;
     }
 }

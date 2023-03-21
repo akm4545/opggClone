@@ -4,11 +4,13 @@ import kr.co.opgg.datasource.common.Date;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 public class Authority extends Date {
 
@@ -23,7 +25,7 @@ public class Authority extends Date {
     private User user;
 
     @Builder
-    public Authority (String authorityGrant){
+    public Authority (String authorityGrant, User user){
         this.authorityGrant = authorityGrant;
     }
 }
