@@ -22,4 +22,9 @@ public class Date {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyyMMddHHmmss", timezone = "Asia/Seoul")
     @Column(name = "update_date")
     private LocalDateTime updateDate;
+
+    @LastModifiedDate
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyyMMddHHmmss", timezone = "Asia/Seoul")
+    @Column(name = "delete_date")
+    private LocalDateTime deleteDate;
 }
