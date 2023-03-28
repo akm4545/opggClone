@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 60초마다 설정 파일의 변경을 확인 하여 변경시 갱신 -->
+<configuration scan="true" scanPeriod="60 seconds">
+    <!-- log file path -->
+    <property name="LOG_PATH" value="./logs"/>
+    <!-- log file name -->
+    <property name="LOG_FILE_NAME" value="logback"/>
+    <!-- error log file name -->
+    <property name="ERR_LOG_FILE_NAME" value="logback_err"/>
+    <!-- Log pattern -->
+    <property name="LOG_PATTERN" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [%thread] %logger{30} - %msg%n"/>
+
+    <!-- 콘솔 로그 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="kr.co.opgg.common.logging.MaskingPatternLayout">
+            <maskPattern>\"uid\"\s*:\s*\"(.*?)\"</maskPattern> <!-- ID JSON pattern -->
+            <maskPattern>\"password\"\s*:\s*\"(.*?)\"</maskPattern> <!-- Password JSON pattern -->
+            <maskPattern>\"ci\"\s*:\s*\"(.*?)\"</maskPattern> <!-- Ci JSON pattern -->
+            <maskPattern>\"di\"\s*:\s*\"(.*?)\"</maskPattern> <!-- Di JSON pattern -->
+            <maskPattern>\"phone\"\s*:\s*\"(.*?)\"</maskPattern> <!-- Phone JSON pattern -->
+            <pattern>${LOG_PATTERN}</pattern>
+        </layout>
+    </appender>
+
+    <!-- 파일 로그 -->
+    <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 파일결로 설정 -->
+        <file>${LOG_PATH}/${LOG_FILE_NAME}.log</file>
+        <!-- 출력패턴 설정 -->
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="kr.co.opgg.common.logging.MaskingPatternLayout">
+                <maskPattern>\"uid\"\s*:\s*\"(.*?)\"</maskPattern> <!-- ID JSON pattern -->
+                <maskPattern>\"password\"\s*:\s*\"(.*?)\"</maskPattern> <!-- Password JSON pattern -->
+                <maskPattern>\"ci\"\s*:\s*\"(.*?)\"</maskPattern> <!-- Ci JSON pattern -->
+                <maskPattern>\"di\"\s*:\s*\"(.*?)\"</maskPattern> <!-- Di JSON pattern -->
+                <maskPattern>\"phone\"\s*:\s*\"(.*?)\"</maskPattern> <!-- Phone JSON pattern -->
+                <pattern>${LOG_PATTERN}</pattern>
+            </layout>
+        </encoder>
+        <!-- Rolling 정책 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- .gz,.zip 등을 넣으면 자동 일자별 로그파일 압축 -->
+            <fileNamePattern>${LOG_PATH}/${LOG_FILE_NAME}.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- 파일당 최고 용량 kb, mb, gb -->
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!-- 일자별 로그파일 최대 보관주기(~일), 해당 설정일 이상된 파일은 자동으로 제거 -->
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 에러 파일 로그 -->
+    <appender name="ROLLING_FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>error</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <file>${LOG_PATH}/${ERR_LOG_FILE_NAME}.log</file>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="kr.co.opgg.common.logging.MaskingPatternLayout">
+                <maskPattern>\"uid\"\s*:\s*\"(.*?)\"</maskPattern> <!-- ID JSON pattern -->
+                <maskPattern>\"password\"\s*:\s*\"(.*?)\"</maskPattern> <!-- Password JSON pattern -->
+                <maskPattern>\"ci\"\s*:\s*\"(.*?)\"</maskPattern> <!-- Ci JSON pattern -->
+                <maskPattern>\"di\"\s*:\s*\"(.*?)\"</maskPattern> <!-- Di JSON pattern -->
+                <maskPattern>\"phone\"\s*:\s*\"(.*?)\"</maskPattern> <!-- Phone JSON pattern -->
+                <pattern>${LOG_PATTERN}</pattern>
+            </layout>
+        </encoder>
+        <!-- Rolling 정책 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- .gz,.zip 등을 넣으면 자동 일자별 로그파일 압축 -->
+            <fileNamePattern>${LOG_PATH}/${ERR_LOG_FILE_NAME}.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- 파일당 최고 용량 kb, mb, gb -->
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!-- 일자별 로그파일 최대 보관주기(~일), 해당 설정일 이상된 파일은 자동으로 제거 -->
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+
+    <!-- 지역 설정 -->
+        <logger name="org.springframework" level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ROLLING_FILE"/>
+            <appender-ref ref="ROLLING_FILE_ERROR"/>
+        </logger>
+
+        <logger name="org.hibernate" level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ROLLING_FILE"/>
+            <appender-ref ref="ROLLING_FILE_ERROR"/>
+        </logger>
+
+        <logger name="org.apache" level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ROLLING_FILE"/>
+            <appender-ref ref="ROLLING_FILE_ERROR"/>
+        </logger>
+
+        <logger name="kr.co.opgg.apis" level="INFO">
+	        <appender-ref ref="CONSOLE"/>
+	        <appender-ref ref="ROLLING_FILE"/>
+	        <appender-ref ref="ROLLING_FILE_ERROR"/>
+        </logger>
+
+        <logger name="kr.co.opgg.common" level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ROLLING_FILE"/>
+            <appender-ref ref="ROLLING_FILE_ERROR"/>
+        </logger>
+
+        <logger name="kr.co.opgg.datasource" level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ROLLING_FILE"/>
+            <appender-ref ref="ROLLING_FILE_ERROR"/>
+        </logger>
+
+        <logger name="kr.co.opgg.utils" level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ROLLING_FILE"/>
+            <appender-ref ref="ROLLING_FILE_ERROR"/>
+        </logger>
+
+    <!-- 전역 설정 -->
+<!--        <root level="INFO">-->
+<!--        <appender-ref ref="CONSOLE"/>-->
+<!--        <appender-ref ref="ROLLING_FILE"/>-->
+<!--        <appender-ref ref="ROLLING_FILE_ERROR"/>-->
+<!--        </root>-->
+
+</configuration>
