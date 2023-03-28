@@ -1,5 +1,7 @@
-package kr.co.opgg.domain;
+package kr.co.opgg.datasource.user;
 
+import kr.co.opgg.datasource.ad.Ad;
+import kr.co.opgg.datasource.authority.Authority;
 import kr.co.opgg.datasource.common.Date;
 import lombok.Builder;
 import lombok.Getter;

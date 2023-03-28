@@ -1,4 +1,4 @@
-package kr.co.opgg.apis.dto;
+package kr.co.opgg.apis.notice.dto;
 
 import lombok.Data;
 

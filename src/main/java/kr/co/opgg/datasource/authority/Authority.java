@@ -1,6 +1,7 @@
-package kr.co.opgg.domain;
+package kr.co.opgg.datasource.authority;
 
 import kr.co.opgg.datasource.common.Date;
+import kr.co.opgg.datasource.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

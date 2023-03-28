@@ -1,4 +1,4 @@
-package kr.co.opgg.apis;
+package kr.co.opgg.apis.notice;
 
 public class NoticeService {
 }
