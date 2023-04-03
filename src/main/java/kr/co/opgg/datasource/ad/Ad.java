@@ -16,7 +16,7 @@ public class Ad extends Date {
     @Id
     @GeneratedValue
     @Column(name = "AD_IDX")
-    private Long idx;
+    private Long adIdx;
 
     @Column(name = "AD_TITLE")
     private String adTitle;
@@ -29,10 +29,11 @@ public class Ad extends Date {
     private User user;
 
     @Builder
-    public Ad (Long idx, String adTitle, String adLink, User user){
-        this.idx = idx;
+    public Ad (Long adIdx, String adTitle, String adLink, User user){
+        this.adIdx = adIdx;
         this.adTitle = adTitle;
         this.adLink = adLink;
+        this.user = user;
         if(user != null && user.getAds().contains(this)){
             user.getAds().add(this);
         }
