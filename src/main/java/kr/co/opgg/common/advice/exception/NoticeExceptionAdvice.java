@@ -13,4 +13,6 @@ public class NoticeExceptionAdvice extends ExceptionAdvice {
     public ResponseEntity noticeExceptionHandler(NoticeException.TestException exception) {
         return sendBadRequestWithCodeAndMessage(exception.getErrorCodeAndMessage(), HttpStatus.BAD_REQUEST);
     }
+
+
 }
