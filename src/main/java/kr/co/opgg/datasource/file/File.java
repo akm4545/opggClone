@@ -18,7 +18,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "FILE")
 public class File {
-
     @Id
     @GeneratedValue
     @Column(name = "FILE_IDX")
