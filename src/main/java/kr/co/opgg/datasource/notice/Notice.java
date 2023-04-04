@@ -13,5 +13,7 @@ import javax.persistence.Table;
 @Setter
 @Entity
 @Table(name = "test")
+//삭제요망
 public class Notice extends Date {
+
 }
