@@ -27,6 +27,10 @@ public class FAQ {
     @Column(name = "faq_content")
     private String faqContent;
 
+    @Comment("자주하는 질문 카테고리")
+    @Column(name = "faq_Category")
+    private String faqCategory;
+
     @Comment("유저")
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")
