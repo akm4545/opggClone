@@ -1,5 +1,6 @@
 package kr.co.opgg.datasource.user_level;
 
+import kr.co.opgg.datasource.level.Level;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,7 +28,8 @@ public class UserLevel {
     @Column(name = "user_idx")
     private Integer userIdx;
 
-    @Comment("레벨 인덱스")
-    @Column(name = "level_idx")
-    private Integer levelIdx;
+    @Comment("레벨")
+    @OneToOne
+    @JoinColumn(name = "level_idx")
+    private Level level;
 }

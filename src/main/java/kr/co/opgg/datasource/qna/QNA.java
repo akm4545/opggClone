@@ -1,5 +1,6 @@
 package kr.co.opgg.datasource.qna;
 
+import kr.co.opgg.datasource.user.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,7 +28,8 @@ public class QNA {
     @Column(name = "qna_content")
     private String qnaContent;
 
-    @Comment("유저 인덱스")
-    @Column(name = "user_idx")
-    private Integer userIdx;
+    @Comment("유저")
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_idx")
+    private User user;
 }

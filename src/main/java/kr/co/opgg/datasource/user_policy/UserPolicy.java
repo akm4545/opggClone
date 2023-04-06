@@ -1,5 +1,6 @@
 package kr.co.opgg.datasource.user_policy;
 
+import kr.co.opgg.datasource.policy.Policy;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,8 +24,9 @@ public class UserPolicy {
     @Column(name = "user_idx")
     private Integer userIdx;
 
-    @Comment("정책 인덱스")
-    @Column(name = "policy_idx")
-    private Integer policyIdx;
+    @Comment("정책")
+    @OneToOne
+    @JoinColumn(name = "policy_idx")
+    private Policy policy;
 }
 

@@ -19,6 +19,7 @@ public class Declaration {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer declarationIdx;
 
+    //관계를 맺어줄 필요가 있는지?
     @Comment("신고 대상 인덱스")
     @Column(name = "declaration_target_idx")
     private Integer declarationTargetIdx;

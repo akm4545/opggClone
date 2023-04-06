@@ -2,11 +2,16 @@ package kr.co.opgg.datasource.user;
 
 import kr.co.opgg.datasource.ad.Ad;
 import kr.co.opgg.datasource.authority.Authority;
+import kr.co.opgg.datasource.board.Board;
 import kr.co.opgg.datasource.common.Date;
+import kr.co.opgg.datasource.qna.QNA;
+import kr.co.opgg.datasource.user_level.UserLevel;
+import kr.co.opgg.datasource.user_policy.UserPolicy;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Comment;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -42,6 +47,22 @@ public class User extends Date {
 
     @OneToMany(mappedBy = "user")
     private List<Ad> ads = new ArrayList<>();
+
+    @Comment("게시글")
+    @OneToMany(mappedBy = "user")
+    private List<Board> boards;
+
+    @Comment("1:1문의")
+    @OneToMany(mappedBy = "user")
+    private List<QNA> qnas;
+
+    @Comment("레벨")
+    @OneToOne(mappedBy = "user_idx")
+    private UserLevel userLevel;
+
+    @Comment("정책")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user_idx")
+    private List<UserPolicy> userPolicies;
 
     @Builder
     public User (String userId, String userPw, String userNickName, String userPolicyYn, Authority authority, List<Ad> ads){

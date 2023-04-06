@@ -1,5 +1,6 @@
 package kr.co.opgg.datasource.comment;
 
+import kr.co.opgg.datasource.board.Board;
 import kr.co.opgg.datasource.common.Date;
 import lombok.*;
 
@@ -22,8 +23,9 @@ public class Comment extends Date {
     @org.hibernate.annotations.Comment("댓글 부모 인덱스")
     @Column(name = "comment_parent_idx")
     private Integer commentParentIdx;
-
-    @org.hibernate.annotations.Comment("게시글 인덱스")
-    @Column(name = "board_idx")
-    private Integer boardIdx;
+    
+    @org.hibernate.annotations.Comment("게시글")
+    @ManyToOne(cascade = CascadeType.ALL ,fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_idx")
+    private Board board;
 }

@@ -1,5 +1,7 @@
 package kr.co.opgg.datasource.ward;
 
+import kr.co.opgg.datasource.board.Board;
+import kr.co.opgg.datasource.user.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,11 +21,13 @@ public class Ward {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer wardIdx;
 
-    @Comment("게시글 인덱스")
-    @Column(name = "board_idx")
-    private Integer boardIdx;
+    @Comment("게시글")
+    @OneToOne
+    @JoinColumn(name = "board_idx")
+    private Board board;
 
-    @Comment("유저 인덱스")
-    @Column(name = "user_idx")
-    private Integer userIdx;
+    @Comment("유저")
+    @OneToOne
+    @JoinColumn(name = "user_idx")
+    private User user;
 }

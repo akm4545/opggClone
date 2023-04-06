@@ -1,5 +1,6 @@
 package kr.co.opgg.datasource.faq;
 
+import kr.co.opgg.datasource.user.User;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 
@@ -26,7 +27,8 @@ public class FAQ {
     @Column(name = "faq_content")
     private String faqContent;
 
-    @Comment("유저 인덱스")
-    @Column(name = "user_idx")
-    private Integer userIdx;
+    @Comment("유저")
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_idx")
+    private User user;
 }

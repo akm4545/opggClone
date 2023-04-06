@@ -1,10 +1,13 @@
 package kr.co.opgg.datasource.board;
 
 import kr.co.opgg.datasource.common.Date;
+import kr.co.opgg.datasource.user.User;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -42,7 +45,12 @@ public class Board extends Date {
     @Comment("게시글 내용")
     private String content;
 
-    @Comment("유저 인덱스")
-    @Column(name = "user_idx")
-    private Integer userIdx;
+    @Comment("유저")
+    @ManyToOne(cascade = CascadeType.ALL ,fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_idx")
+    private User user;
+
+    @Comment("댓글")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "board")
+    private List<kr.co.opgg.datasource.comment.Comment> comments;
 }
