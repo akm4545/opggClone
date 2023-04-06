@@ -1,5 +1,6 @@
 package kr.co.opgg.datasource.level_policy;
 
+import kr.co.opgg.datasource.common.Date;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "LEVEL_POLICY")
-public class LevelPolicy {
+public class LevelPolicy extends Date {
     @Id
     @Comment("레벨 정책 인덱스")
     @Column(name = "level_policy_idx")

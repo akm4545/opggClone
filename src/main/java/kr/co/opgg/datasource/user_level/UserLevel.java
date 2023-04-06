@@ -1,5 +1,6 @@
 package kr.co.opgg.datasource.user_level;
 
+import kr.co.opgg.datasource.common.Date;
 import kr.co.opgg.datasource.level.Level;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "USER_LEVEL")
-public class UserLevel {
+public class UserLevel extends Date {
     @Id
     @Comment("유저 레벨 인덱스")
     @Column(name = "user_level_idx")

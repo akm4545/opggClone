@@ -1,6 +1,7 @@
 package kr.co.opgg.datasource.ward;
 
 import kr.co.opgg.datasource.board.Board;
+import kr.co.opgg.datasource.common.Date;
 import kr.co.opgg.datasource.user.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "WARD")
-public class Ward {
+public class Ward extends Date {
     @Id
     @Comment("와드 인덱스")
     @Column(name = "ward_idx")

@@ -1,5 +1,6 @@
 package kr.co.opgg.datasource.policy;
 
+import kr.co.opgg.datasource.common.Date;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "POLICY")
-public class Policy {
+public class Policy extends Date {
     @Id
     @Comment("약관 인덱스")
     @Column(name = "policy_idx")

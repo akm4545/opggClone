@@ -1,5 +1,6 @@
 package kr.co.opgg.datasource.declaration;
 
+import kr.co.opgg.datasource.common.Date;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 @Table(name = "DECLARATION")
-public class Declaration {
+public class Declaration extends Date {
     @Id
     @Comment("신고 인덱스")
     @Column(name = "declaration_idx")

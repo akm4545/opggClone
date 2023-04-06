@@ -1,5 +1,6 @@
 package kr.co.opgg.datasource.recommended_log;
 
+import kr.co.opgg.datasource.common.Date;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "RECOMMENDED_LOG")
-public class RecommendedLog {
+public class RecommendedLog extends Date {
     @Id
     @Comment("추천 로그 인덱스")
     @Column(name = "recommended_log_idx")

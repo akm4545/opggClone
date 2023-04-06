@@ -1,5 +1,6 @@
 package kr.co.opgg.datasource.faq;
 
+import kr.co.opgg.datasource.common.Date;
 import kr.co.opgg.datasource.user.User;
 import lombok.*;
 import org.hibernate.annotations.Comment;
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 @Table(name = "FAQ")
-public class FAQ {
+public class FAQ extends Date {
     @Id
     @Comment("자주하는 질문")
     @Column(name = "faq_idx")
