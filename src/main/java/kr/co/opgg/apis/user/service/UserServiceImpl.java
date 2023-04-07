@@ -18,8 +18,8 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User insertUser(UserRequest userRequest) {
-        User existUser = userRepository.findByUserId(userRequest.getUserId());
-        if(!ObjectUtils.isEmpty(existUser)){
+        Long existUser = userRepository.findByUserId(userRequest.getUserId());
+        if(existUser != 0){
             throw new UserException.UserExistException();
         }
 

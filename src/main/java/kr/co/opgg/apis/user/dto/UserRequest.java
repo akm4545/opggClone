@@ -1,6 +1,7 @@
 package kr.co.opgg.apis.user.dto;
 
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -11,18 +12,28 @@ import javax.validation.constraints.Size;
 @ToString
 public class UserRequest {
 
-    @NotBlank(message = "아이디가 공백입니다.")
+    @NotBlank
     private String userId;
 
-    @NotBlank(message = "비밀번호가 공백입니다.")
+    @NotBlank
     private String userPw;
 
-    @NotBlank(message = "닉네임이 공백입니다.")
+    @NotBlank
     private String userNickName;
 
-    @NotBlank(message = "유저 정책 동의여부가 없습니다.")
+    @NotBlank
     private String userPolicyYN;
 
-    @NotBlank(message = "유저의 권한이 없습니다.")
+    @NotBlank
     private String authorityIdx;
+
+    @Builder
+    public UserRequest(String userId, String userPw, String userNickName, String userPolicyYN, String authorityIdx){
+        this.userId = userId;
+        this.userPw = userPw;
+        this.userNickName = userNickName;
+        this.userPolicyYN = userPolicyYN;
+        this.authorityIdx = authorityIdx;
+    }
+
 }
