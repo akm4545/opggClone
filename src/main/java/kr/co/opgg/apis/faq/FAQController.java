@@ -27,5 +27,4 @@ public class FAQController {
 
         return ResponseEntity.ok(faqService.selectFaqList(faqCategory));
     }
-
 }

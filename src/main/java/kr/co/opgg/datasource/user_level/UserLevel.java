@@ -2,6 +2,7 @@ package kr.co.opgg.datasource.user_level;
 
 import kr.co.opgg.datasource.common.Date;
 import kr.co.opgg.datasource.level.Level;
+import kr.co.opgg.datasource.user.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,9 +26,10 @@ public class UserLevel extends Date {
     @Column(name = "user_level_exp")
     private Integer userLevelExp;
 
-    @Comment("유저 인덱스")
-    @Column(name = "user_idx")
-    private Integer userIdx;
+    @Comment("유저")
+    @OneToOne
+    @JoinColumn(name = "user_idx")
+    private User user;
 
     @Comment("레벨")
     @OneToOne

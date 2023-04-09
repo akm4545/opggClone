@@ -57,11 +57,11 @@ public class User extends Date {
     private List<QNA> qnas;
 
     @Comment("레벨")
-    @OneToOne(mappedBy = "user_idx")
+    @OneToOne(mappedBy = "user")
     private UserLevel userLevel;
 
     @Comment("정책")
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user_idx")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userIdx")
     private List<UserPolicy> userPolicies;
 
     @Builder
