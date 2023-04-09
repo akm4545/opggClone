@@ -9,4 +9,12 @@ public class CodeType {
     public enum FAQType{
         PATCH, RANKING, RECORD, REPLAY, CHAMPION, ETC
     }
+
+    /*
+    * 게시글
+    * [공지, 기획, 유저 뉴스, 팁, 자유, 유머, 영상, 유저찾기, 사건 사고, 팬아트]
+    * */
+    public enum BoardType{
+        NOTICE, PLAN, NEWS, TIP, FREE, VIDEO, FIND, ISSUE, ART
+    }
 }

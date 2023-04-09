@@ -4,7 +4,6 @@ import kr.co.opgg.apis.common.dto.ListResult;
 import kr.co.opgg.apis.common.dto.SingleResult;
 import kr.co.opgg.apis.faq.dto.FAQRequest;
 import kr.co.opgg.apis.faq.dto.FAQResponse;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
