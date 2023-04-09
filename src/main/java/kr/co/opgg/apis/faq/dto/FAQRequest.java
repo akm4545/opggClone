@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 public class FAQRequest {
     @Data
     public static class FAQ{
+        @NotNull
         private Integer faqIdx;
 
         private String faqTitle;

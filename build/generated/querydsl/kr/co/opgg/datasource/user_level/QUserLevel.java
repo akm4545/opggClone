@@ -35,7 +35,7 @@ public class QUserLevel extends EntityPathBase<UserLevel> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updateDate = _super.updateDate;
 
-    public final NumberPath<Integer> userIdx = createNumber("userIdx", Integer.class);
+    public final kr.co.opgg.datasource.user.QUser user;
 
     public final NumberPath<Integer> userLevelExp = createNumber("userLevelExp", Integer.class);
 
@@ -60,6 +60,7 @@ public class QUserLevel extends EntityPathBase<UserLevel> {
     public QUserLevel(Class<? extends UserLevel> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.level = inits.isInitialized("level") ? new kr.co.opgg.datasource.level.QLevel(forProperty("level")) : null;
+        this.user = inits.isInitialized("user") ? new kr.co.opgg.datasource.user.QUser(forProperty("user"), inits.get("user")) : null;
     }
 
 }
