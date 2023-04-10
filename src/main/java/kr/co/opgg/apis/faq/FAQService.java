@@ -32,11 +32,8 @@ public class FAQService {
         List<FAQ> faqList = faqRepository.findAllByFaqCategory(category).orElseThrow(() -> CommonException.DOES_NOT_EXIST_EXCEPTION);
 
         return responseService.getListResult(faqList.stream()
-                .map(faq -> FAQResponse.FAQ.builder()
-                        .faqIdx(faq.getFaqIdx())
-                        .faqTitle(faq.getTitle())
-                        .faqContent(faq.getFaqContent())
-                        .build()).collect(Collectors.toList()));
+                .map(FAQResponse.FAQ::domainToDto)
+                .collect(Collectors.toList()));
     }
 
     public SingleResult<FAQResponse.FAQ> selectFaq(FAQRequest.FAQ faqRequest) {
@@ -44,10 +41,6 @@ public class FAQService {
 
         FAQ faq = faqRepository.findById(faqIdx).orElseThrow(() -> CommonException.DOES_NOT_EXIST_EXCEPTION);
 
-        return responseService.getSingleResult(FAQResponse.FAQ.builder()
-                .faqTitle(faq.getTitle())
-                .faqContent(faq.getFaqContent())
-                .build()
-        );
+        return responseService.getSingleResult(FAQResponse.FAQ.domainToDto(faq));
     }
 }

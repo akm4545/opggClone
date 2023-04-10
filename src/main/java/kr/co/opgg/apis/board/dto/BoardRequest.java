@@ -9,7 +9,5 @@ public class BoardRequest {
         private String sort;
 
         private String category;
-
-        private Integer page;
     }
 }
