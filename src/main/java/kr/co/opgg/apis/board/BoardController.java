@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,7 +23,8 @@ public class BoardController {
     @Autowired
     private BoardService boardService;
 
-    public ResponseEntity<PageResult<List<BoardResponse.BoardList>>> selectBoardList(@Valid BoardRequest.BoardListSearchCondition searchCondition, BindingResult bindingResult, Pageable pageable){
+    @GetMapping("/list")
+    public ResponseEntity<PageResult<BoardResponse.BoardList>> selectBoardList(@Valid BoardRequest.BoardListSearchCondition searchCondition, BindingResult bindingResult, Pageable pageable){
         ValidateUtil.validateBindingResult(bindingResult);
 
         return ResponseEntity.ok(boardService.selectBoardList(searchCondition, pageable));

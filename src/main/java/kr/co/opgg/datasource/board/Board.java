@@ -1,6 +1,7 @@
 package kr.co.opgg.datasource.board;
 
 import kr.co.opgg.datasource.common.Date;
+import kr.co.opgg.datasource.file.File;
 import kr.co.opgg.datasource.user.User;
 import lombok.*;
 import org.hibernate.annotations.Comment;
@@ -53,4 +54,8 @@ public class Board extends Date {
     @Comment("댓글")
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "board")
     private List<kr.co.opgg.datasource.comment.Comment> comments;
+
+    @Comment("파일")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "board")
+    private List<File> files;
 }

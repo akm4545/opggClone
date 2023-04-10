@@ -9,10 +9,12 @@ import kr.co.opgg.datasource.board.Board;
 import kr.co.opgg.datasource.board.BoardRepository;
 import kr.co.opgg.utils.validate.PageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BoardService {
@@ -29,19 +31,26 @@ public class BoardService {
     @Autowired
     private PageUtil pageUtil;
 
-    public PageResult<List<BoardResponse.BoardList>> selectBoardList(BoardRequest.BoardListSearchCondition searchCondition, Pageable pageable) {
+    public PageResult<BoardResponse.BoardList> selectBoardList(BoardRequest.BoardListSearchCondition searchCondition, Pageable pageable) {
         String sort = searchCondition.getSort();
         pageable = pageUtil.getSortPageable(pageable, sort);
 
         String category = searchCondition.getCategory();
-        List<Board> boardList;
+        Page<Board> boardList;
 
         if(boardCheck.isAllCategory(category)){
-            boardList = (List<Board>) boardRepository.findAll(pageable).get();
+            boardList = boardRepository.findAll(pageable);
         }else{
             boardList = boardRepository.findAllByBoardType(category, pageable).get();
         }
 
-        return null;
+        return responseService.getPageResult(new PageImpl<>(
+                boardList
+                        .stream()
+                        .map(BoardResponse.BoardList::domainToDto)
+                        .collect(Collectors.toList())
+                ,pageable
+                ,boardList.getTotalElements()
+        ));
     }
 }
