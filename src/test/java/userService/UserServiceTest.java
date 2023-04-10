@@ -2,7 +2,7 @@ package userService;
 
 import kr.co.opgg.Main;
 import kr.co.opgg.apis.user.dto.UserRequest;
-import kr.co.opgg.apis.user.service.UserService;
+import kr.co.opgg.apis.user.UserService;
 import kr.co.opgg.datasource.user.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -19,6 +19,9 @@ public class UserRequest {
     private String userPw;
 
     @NotBlank
+    private String userPhone;
+
+    @NotBlank
     private String userNickName;
 
     @NotBlank
@@ -27,13 +30,23 @@ public class UserRequest {
     @NotBlank
     private String authorityIdx;
 
+
+
+
     @Builder
-    public UserRequest(String userId, String userPw, String userNickName, String userPolicyYN, String authorityIdx){
+    public UserRequest(String userId, String userPw, String userPhone, String userNickName, String userPolicyYN, String authorityIdx){
         this.userId = userId;
         this.userPw = userPw;
         this.userNickName = userNickName;
         this.userPolicyYN = userPolicyYN;
         this.authorityIdx = authorityIdx;
+        this.userPhone = userPhone;
+    }
+
+    @Getter
+    public static class UserPrivateRequest {
+        @NotBlank
+        private String userPhone;
     }
 
 }

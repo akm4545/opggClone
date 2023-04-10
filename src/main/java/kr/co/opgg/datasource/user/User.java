@@ -41,10 +41,14 @@ public class User extends Date {
     @Column(name = "USER_POLICY_YN")
     private String userPolicyYn;
 
+    @Column(name = "USER_PHONE")
+    private String userPhone;
+
     @OneToOne
     @JoinColumn(name="AUTHORITY_IDX")
     private Authority authority;
 
+    @Comment("광고")
     @OneToMany(mappedBy = "user")
     private List<Ad> ads = new ArrayList<>();
 
@@ -65,9 +69,10 @@ public class User extends Date {
     private List<UserPolicy> userPolicies;
 
     @Builder
-    public User (String userId, String userPw, String userNickName, String userPolicyYn, Authority authority, List<Ad> ads){
+    public User (String userId, String userPw, String userPhone, String userNickName, String userPolicyYn, Authority authority, List<Ad> ads){
         this.userId = userId;
         this.userPw = userPw;
+        this.userPhone = userPhone;
         this.userNickName = userNickName;
         this.userPolicyYn = userPolicyYn;
         this.authority = authority;
