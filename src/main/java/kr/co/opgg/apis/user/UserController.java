@@ -1,5 +1,6 @@
 package kr.co.opgg.apis.user;
 
+import kr.co.opgg.apis.common.dto.SingleResult;
 import kr.co.opgg.apis.user.dto.UserRequest;
 import kr.co.opgg.apis.user.dto.UserResponse;
 import kr.co.opgg.common.exception.UserException;
@@ -22,25 +23,30 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("")
-    public ResponseEntity<UserResponse> insertUser(@Valid UserRequest userRequest, BindingResult bindingResult){
+    public ResponseEntity<SingleResult<UserResponse>> insertUser(@Valid UserRequest userRequest, BindingResult bindingResult){
         ValidateUtil.validateBindingResult(bindingResult);
 
-        User user = userService.insertUser(userRequest);
-        Optional.ofNullable(user).orElseThrow(UserException.UserCreateException::new);
-        UserResponse userResponse = UserResponse.builder()
-                .userIdx(user.getUserIdx())
-                .build();
-
+        SingleResult<UserResponse> userResponse = userService.insertUser(userRequest);
+        Optional.ofNullable(userResponse).orElseThrow(UserException.UserCreateException::new);
 
         return ResponseEntity.ok(userResponse);
     }
 
     @GetMapping("/{userPhone}")
-    public ResponseEntity<UserResponse> findUserId(@Valid UserRequest.UserPrivateRequest userPrivateRequest, BindingResult bindingResult){
+    public ResponseEntity<SingleResult<UserResponse>> findUserId(@Valid UserRequest.UserPrivateRequest userPrivateRequest, BindingResult bindingResult){
         ValidateUtil.validateBindingResult(bindingResult);
 
-        UserResponse user = Optional.ofNullable(userService.findUserId(userPrivateRequest)).orElseThrow(UserException.UserInfoNotFoundException::new);
+        SingleResult<UserResponse> userResponse = Optional.ofNullable(userService.findUserId(userPrivateRequest)).orElseThrow(UserException.UserInfoNotFoundException::new);
 
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(userResponse);
+    }
+
+    @GetMapping("")
+    public ResponseEntity loginUser(@Valid UserRequest userRequest, BindingResult bindingResult){
+        ValidateUtil.validateBindingResult(bindingResult);
+
+        userService.loginUser(userRequest);
+
+        return null;
     }
 }

@@ -1,5 +1,7 @@
 package kr.co.opgg.apis.user;
 
+import kr.co.opgg.apis.common.ResponseService;
+import kr.co.opgg.apis.common.dto.SingleResult;
 import kr.co.opgg.apis.user.dto.UserRequest;
 import kr.co.opgg.apis.user.dto.UserResponse;
 import kr.co.opgg.common.exception.UserException;
@@ -17,7 +19,9 @@ public class UserService{
 
     private final UserRepository userRepository;
 
-    public User insertUser(UserRequest userRequest) {
+    private final ResponseService responseService;
+
+    public SingleResult<UserResponse> insertUser(UserRequest userRequest) {
         UserResponse existUser = userRepository.findByUserId(userRequest.getUserId());
         if(StringUtils.hasText(existUser.getUserId())){
             throw new UserException.UserExistException();
@@ -31,12 +35,24 @@ public class UserService{
                 .userPolicyYn(userRequest.getUserPolicyYN())
                 .build();
 
-        return userRepository.save(joinUser);
+        joinUser = userRepository.save(joinUser);
+        UserResponse userResponse = UserResponse
+                .builder()
+                .userId(joinUser.getUserId())
+                .userIdx(joinUser.getUserIdx())
+                .build();
+
+        return responseService.getSingleResult(userResponse);
     }
 
-    public UserResponse findUserId(@Valid UserRequest.UserPrivateRequest userRequest) {
-        UserResponse userResponse = userRepository.findUserIdByPhone(userRequest);
+    public SingleResult<UserResponse> findUserId(UserRequest.UserPrivateRequest userRequest) {
+        return responseService.getSingleResult(userRepository.findUserIdByPhone(userRequest));
+    }
 
-        return userResponse;
+    public User loginUser(UserRequest userRequest) {
+        //todo jwtToken 생성
+        User user = userRepository.loginUser(userRequest);
+
+        return null;
     }
 }

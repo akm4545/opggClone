@@ -18,16 +18,12 @@ public class UserRequest {
     @NotBlank
     private String userPw;
 
-    @NotBlank
     private String userPhone;
 
-    @NotBlank
     private String userNickName;
 
-    @NotBlank
     private String userPolicyYN;
 
-    @NotBlank
     private String authorityIdx;
 
 

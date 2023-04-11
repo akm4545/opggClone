@@ -30,4 +30,14 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
                 .where(user.userPhone.eq(userRequest.getUserPhone()))
                 .fetchFirst();
     }
+
+    @Override
+    public User loginUser(UserRequest userRequest) {
+        return (User) query.select()
+                .from(user)
+                .where(user.userId.eq(userRequest.getUserId())
+                .and(user.userPw.eq(userRequest.getUserPw()))
+                .and(user.deleteDate.isNull()))
+                .fetchFirst();
+    }
 }

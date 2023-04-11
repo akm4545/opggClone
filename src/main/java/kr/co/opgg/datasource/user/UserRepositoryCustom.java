@@ -9,4 +9,5 @@ public interface UserRepositoryCustom {
 
     UserResponse findUserIdByPhone(UserRequest.UserPrivateRequest userRequest);
 
+    User loginUser(UserRequest userRequest);
 }
