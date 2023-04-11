@@ -4,6 +4,7 @@ import kr.co.opgg.apis.board.dto.BoardRequest;
 import kr.co.opgg.apis.board.dto.BoardResponse;
 import kr.co.opgg.apis.common.dto.ListResult;
 import kr.co.opgg.apis.common.dto.PageResult;
+import kr.co.opgg.apis.common.dto.SingleResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.List;
 import kr.co.opgg.utils.validate.ValidateUtil;
 
 @RestController
@@ -28,5 +28,12 @@ public class BoardController {
         ValidateUtil.validateBindingResult(bindingResult);
 
         return ResponseEntity.ok(boardService.selectBoardList(searchCondition, pageable));
+    }
+
+    @GetMapping("/{boardIdx}")
+    public ResponseEntity<SingleResult<BoardResponse>> selectBoard(@Valid BoardRequest.Board board, BindingResult bindingResult){
+        ValidateUtil.validateBindingResult(bindingResult);
+
+        return ResponseEntity.ok(boardService.selectBoard(board));
     }
 }

@@ -7,7 +7,6 @@ import lombok.*;
 import org.hibernate.annotations.Comment;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -24,7 +23,7 @@ public class Board extends Date {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer boardIdx;
 
-    @Comment("게시판 인덱스")
+    @Comment("게시판 제목")
     private String title;
 
     @Comment("게시판 타입")

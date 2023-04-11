@@ -2,6 +2,7 @@ package kr.co.opgg.datasource.comment;
 
 import kr.co.opgg.datasource.board.Board;
 import kr.co.opgg.datasource.common.Date;
+import kr.co.opgg.datasource.user.User;
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,4 +29,13 @@ public class Comment extends Date {
     @ManyToOne(cascade = CascadeType.ALL ,fetch = FetchType.LAZY)
     @JoinColumn(name = "board_idx")
     private Board board;
+
+    @org.hibernate.annotations.Comment("댓글")
+    @Column(name = "comment_content")
+    private String commentContent;
+
+    @org.hibernate.annotations.Comment("유저")
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_idx")
+    private User user;
 }
