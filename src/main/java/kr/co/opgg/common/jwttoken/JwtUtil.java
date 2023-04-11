@@ -19,7 +19,7 @@ public class JwtUtil {
     private static final Long REFRESH_TIME = 2 * 60 * 1000L;
     public static final String ACCESS_TOKEN = "Access_Token";
     public static final String REFERSH_TOKEN = "Refersh_Token";
-    private static final String SECRET_KEY = "TestSecretKey";
+    private static final String SECRET_KEY = "happilyeverafterhappilyeverafterdasgsadgasdgsadgasdgsdag";
 
 
     private String secretKey = SECRET_KEY;

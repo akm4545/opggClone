@@ -9,17 +9,17 @@ public class UserException{
 
     @Getter
     public static class UserExistException extends RuntimeException {
-        private final UserErrorCodeAndMessage errorCodeAndMessage = new UserErrorCodeAndMessage(1, "중복된 계정입니다.");
+        private final UserErrorCodeAndMessage errorCodeAndMessage = UserErrorCodeAndMessage.Duplicated;
     }
 
     @Getter
     public static class UserCreateException extends RuntimeException {
-        private final UserErrorCodeAndMessage errorCodeAndMessage = new UserErrorCodeAndMessage(2, "유저를 등록중 에러가 발생했습니다.");
+        private final UserErrorCodeAndMessage errorCodeAndMessage = UserErrorCodeAndMessage.InsertUserErr;
     }
 
     @Getter
     public static class UserInfoNotFoundException extends RuntimeException {
-        private final UserErrorCodeAndMessage errorCodeAndMessage = new UserErrorCodeAndMessage(3, "유저 정보를 찾을 수 없습니다.");
+        private final UserErrorCodeAndMessage errorCodeAndMessage = UserErrorCodeAndMessage.NotFoundUser;
     }
 
 }
