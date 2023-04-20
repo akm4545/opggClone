@@ -49,6 +49,8 @@ public class QUser extends EntityPathBase<User> {
 
     public final StringPath userNickName = createString("userNickName");
 
+    public final StringPath userPhone = createString("userPhone");
+
     public final ListPath<kr.co.opgg.datasource.user_policy.UserPolicy, kr.co.opgg.datasource.user_policy.QUserPolicy> userPolicies = this.<kr.co.opgg.datasource.user_policy.UserPolicy, kr.co.opgg.datasource.user_policy.QUserPolicy>createList("userPolicies", kr.co.opgg.datasource.user_policy.UserPolicy.class, kr.co.opgg.datasource.user_policy.QUserPolicy.class, PathInits.DIRECT2);
 
     public final StringPath userPolicyYn = createString("userPolicyYn");

@@ -42,6 +42,8 @@ public class QBoard extends EntityPathBase<Board> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> deleteDate = _super.deleteDate;
 
+    public final ListPath<kr.co.opgg.datasource.file.File, kr.co.opgg.datasource.file.QFile> files = this.<kr.co.opgg.datasource.file.File, kr.co.opgg.datasource.file.QFile>createList("files", kr.co.opgg.datasource.file.File.class, kr.co.opgg.datasource.file.QFile.class, PathInits.DIRECT2);
+
     public final NumberPath<Integer> readCount = createNumber("readCount", Integer.class);
 
     public final StringPath title = createString("title");

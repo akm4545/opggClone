@@ -29,9 +29,9 @@ public class File {
     @Column(name = "FILE_DIRECTORY")
     private String fileDirectory;
 
-    @Column(name = "FILE_TYPE")
+    /*@Column(name = "FILE_TYPE")
     @Enumerated(EnumType.ORDINAL)
-    private CodeType.NoticeType fileType; // 파일 타입 이넘으로??
+    private CodeType.NoticeType fileType; */// 파일 타입 이넘으로??
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "BOARD_IDX")
@@ -45,7 +45,7 @@ public class File {
     @JoinColumn(name = "QNA_IDX")
     private QNA qna;
 
-    @Builder
+    /*@Builder
     public File (Long fileIdx, String fileName, String fileDirectory, CodeType.NoticeType fileType, Board board, Ad ad, QNA qna){
         this.fileIdx = fileIdx;
         this.fileName = fileName;
@@ -56,5 +56,5 @@ public class File {
         this.board = board;
         this.ad = ad;
         this.qna = qna;
-    }
+    }*/
 }

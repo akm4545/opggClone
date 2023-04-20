@@ -26,6 +26,8 @@ public class QComment extends EntityPathBase<Comment> {
 
     public final kr.co.opgg.datasource.board.QBoard board;
 
+    public final StringPath commentContent = createString("commentContent");
+
     public final NumberPath<Integer> commentIdx = createNumber("commentIdx", Integer.class);
 
     public final NumberPath<Integer> commentParentIdx = createNumber("commentParentIdx", Integer.class);
@@ -38,6 +40,8 @@ public class QComment extends EntityPathBase<Comment> {
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updateDate = _super.updateDate;
+
+    public final kr.co.opgg.datasource.user.QUser user;
 
     public QComment(String variable) {
         this(Comment.class, forVariable(variable), INITS);
@@ -58,6 +62,7 @@ public class QComment extends EntityPathBase<Comment> {
     public QComment(Class<? extends Comment> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.board = inits.isInitialized("board") ? new kr.co.opgg.datasource.board.QBoard(forProperty("board"), inits.get("board")) : null;
+        this.user = inits.isInitialized("user") ? new kr.co.opgg.datasource.user.QUser(forProperty("user"), inits.get("user")) : null;
     }
 
 }

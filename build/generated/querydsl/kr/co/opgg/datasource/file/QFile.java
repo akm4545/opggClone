@@ -32,8 +32,6 @@ public class QFile extends EntityPathBase<File> {
 
     public final StringPath fileName = createString("fileName");
 
-    public final EnumPath<kr.co.opgg.common.enums.CodeType.NoticeType> fileType = createEnum("fileType", kr.co.opgg.common.enums.CodeType.NoticeType.class);
-
     public final kr.co.opgg.datasource.qna.QQNA qna;
 
     public QFile(String variable) {

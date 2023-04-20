@@ -67,7 +67,6 @@ public class BoardService {
         Board boardDetail = boardRepository.findById(boardIdx).orElseThrow(() -> CommonException.DOES_NOT_EXIST_EXCEPTION);
 
         List<Comment> commentList = boardDetail.getComments();
-        List<BoardResponse.CommentDetail> commentDetailList = 
 
         return null;
     }
