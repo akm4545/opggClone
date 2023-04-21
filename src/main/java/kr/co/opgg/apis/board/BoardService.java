@@ -71,6 +71,6 @@ public class BoardService {
         Board boardDetail = boardRepository.findById(boardIdx).orElseThrow(() -> CommonException.DOES_NOT_EXIST_EXCEPTION);
         List<Comment> commentList = boardQueryDsl.selectCommentList(boardIdx);
 
-        return null;
+        return responseService.getSingleResult(BoardResponse.BoardDetail.domainToDto(boardDetail, commentList));
     }
 }
