@@ -3,14 +3,15 @@ package kr.co.opgg.apis.board;
 import kr.co.opgg.apis.board.dto.BoardRequest;
 import kr.co.opgg.apis.board.dto.BoardResponse;
 import kr.co.opgg.apis.common.ResponseService;
-import kr.co.opgg.apis.common.dto.ListResult;
 import kr.co.opgg.apis.common.dto.PageResult;
 import kr.co.opgg.apis.common.dto.SingleResult;
 import kr.co.opgg.common.exception.CommonException;
 import kr.co.opgg.datasource.board.Board;
+import kr.co.opgg.datasource.board.BoardQueryDsl;
 import kr.co.opgg.datasource.board.BoardRepository;
 import kr.co.opgg.datasource.comment.Comment;
-import kr.co.opgg.utils.validate.PageUtil;
+import kr.co.opgg.utils.pagination.PageUtil;
+import kr.co.opgg.utils.date.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -33,7 +34,13 @@ public class BoardService {
     private BoardCheck boardCheck;
 
     @Autowired
+    private DateUtil timeUtil;
+
+    @Autowired
     private PageUtil pageUtil;
+
+    @Autowired
+    private BoardQueryDsl boardQueryDsl;
 
     public PageResult<BoardResponse.BoardList> selectBoardList(BoardRequest.BoardListSearchCondition searchCondition, Pageable pageable) {
         String sort = searchCondition.getSort();
@@ -58,15 +65,11 @@ public class BoardService {
         ));
     }
 
-    //게시글 생성시간이 지금부터 몇분전에 있었는지 삽입 (목록 포함)
-    //파일 목록 삽입
-    //코멘트 목록 재귀로 처리
     public SingleResult<BoardResponse.BoardDetail> selectBoard(BoardRequest.Board board) {
         Integer boardIdx = board.getBoardIdx();
 
         Board boardDetail = boardRepository.findById(boardIdx).orElseThrow(() -> CommonException.DOES_NOT_EXIST_EXCEPTION);
-
-        List<Comment> commentList = boardDetail.getComments();
+        List<Comment> commentList = boardQueryDsl.selectCommentList(boardIdx);
 
         return null;
     }

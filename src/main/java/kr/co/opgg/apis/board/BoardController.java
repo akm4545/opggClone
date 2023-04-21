@@ -34,7 +34,6 @@ public class BoardController {
     public ResponseEntity<SingleResult<BoardResponse>> selectBoard(@Valid BoardRequest.Board board, BindingResult bindingResult){
         ValidateUtil.validateBindingResult(bindingResult);
 
-        /*return ResponseEntity.ok(boardService.selectBoard(board));*/
-        return null;
+        return ResponseEntity.ok(boardService.selectBoard(board));
     }
 }

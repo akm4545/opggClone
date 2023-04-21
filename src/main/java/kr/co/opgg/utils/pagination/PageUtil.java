@@ -1,4 +1,4 @@
-package kr.co.opgg.utils.validate;
+package kr.co.opgg.utils.pagination;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PageUtil {
-
     public Pageable getSortPageable(Pageable pageable, String sortTarget){
         Integer pageNumber = pageable.getPageNumber();
         Integer pageSize = pageable.getPageSize();
