@@ -3,6 +3,7 @@ package kr.co.opgg.apis.board.dto;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public class BoardRequest {
 
@@ -17,5 +18,17 @@ public class BoardRequest {
     public static class Board{
         @NotNull
         private Integer boardIdx;
+    }
+
+    @Data
+    public static class BoardDetail{
+        @NotNull
+        private String title;
+
+        @NotNull
+        private String boardType;
+
+        @NotNull
+        private String content;
     }
 }

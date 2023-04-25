@@ -10,11 +10,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import kr.co.opgg.utils.validate.ValidateUtil;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/board")
@@ -35,5 +39,12 @@ public class BoardController {
         ValidateUtil.validateBindingResult(bindingResult);
 
         return ResponseEntity.ok(boardService.selectBoard(board));
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<SingleResult<BoardResponse.BoardDetail>> insertBoard(List<MultipartFile> multipartFileList, @Valid BoardRequest.BoardDetail board, BindingResult bindingResult){
+        ValidateUtil.validateBindingResult(bindingResult);
+
+        return ResponseEntity.ok(boardService.insertBoard(multipartFileList, board));
     }
 }

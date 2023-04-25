@@ -2,6 +2,7 @@ package kr.co.opgg.apis.board;
 
 import kr.co.opgg.apis.board.dto.BoardRequest;
 import kr.co.opgg.apis.board.dto.BoardResponse;
+import kr.co.opgg.apis.common.CommonService;
 import kr.co.opgg.apis.common.ResponseService;
 import kr.co.opgg.apis.common.dto.PageResult;
 import kr.co.opgg.apis.common.dto.SingleResult;
@@ -13,10 +14,13 @@ import kr.co.opgg.datasource.comment.Comment;
 import kr.co.opgg.utils.pagination.PageUtil;
 import kr.co.opgg.utils.date.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,13 +38,18 @@ public class BoardService {
     private BoardCheck boardCheck;
 
     @Autowired
-    private DateUtil timeUtil;
-
-    @Autowired
     private PageUtil pageUtil;
 
     @Autowired
     private BoardQueryDsl boardQueryDsl;
+
+    @Autowired
+    private CommonService commonService;
+
+    @Value("board.upload.path")
+    private String filePath;
+
+    private final String fileType = "BOARD";
 
     public PageResult<BoardResponse.BoardList> selectBoardList(BoardRequest.BoardListSearchCondition searchCondition, Pageable pageable) {
         String sort = searchCondition.getSort();
@@ -72,5 +81,24 @@ public class BoardService {
         List<Comment> commentList = boardQueryDsl.selectCommentList(boardIdx);
 
         return responseService.getSingleResult(BoardResponse.BoardDetail.domainToDto(boardDetail, commentList));
+    }
+
+    @Transactional
+    public SingleResult<BoardResponse.BoardDetail> insertBoard(List<MultipartFile> multipartFileList, BoardRequest.BoardDetail boardDetail){
+        Board board = Board
+                .builder()
+                .boardType(boardDetail.getBoardType())
+                .title(boardDetail.getTitle())
+                .content(boardDetail.getContent())
+                .build();
+
+        boardRepository.save(board);
+
+        //빈값 체크 유틸을 만들어야 하는지
+        if(multipartFileList != null && multipartFileList.size() != 0){
+            commonService.fileUpload(multipartFileList, filePath, board ,fileType);
+        }
+
+        return null;
     }
 }

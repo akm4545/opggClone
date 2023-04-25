@@ -5,18 +5,17 @@ import kr.co.opgg.common.enums.CodeType;
 import kr.co.opgg.datasource.ad.Ad;
 import kr.co.opgg.datasource.board.Board;
 import kr.co.opgg.datasource.qna.QNA;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "FILE")
+@Builder
 public class File {
     @Id
     @GeneratedValue
@@ -25,7 +24,6 @@ public class File {
 
     @Column(name = "FILE_NAME")
     private String fileName;
-
     @Column(name = "FILE_DIRECTORY")
     private String fileDirectory;
 
