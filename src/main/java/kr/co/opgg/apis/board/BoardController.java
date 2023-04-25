@@ -31,7 +31,7 @@ public class BoardController {
     }
 
     @GetMapping("/{boardIdx}")
-    public ResponseEntity<SingleResult<BoardResponse>> selectBoard(@Valid BoardRequest.Board board, BindingResult bindingResult){
+    public ResponseEntity<SingleResult<BoardResponse.BoardDetail>> selectBoard(@Valid BoardRequest.Board board, BindingResult bindingResult){
         ValidateUtil.validateBindingResult(bindingResult);
 
         return ResponseEntity.ok(boardService.selectBoard(board));

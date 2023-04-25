@@ -6,6 +6,8 @@ import kr.co.opgg.datasource.user.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,4 +40,8 @@ public class Comment extends Date {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")
     private User user;
+
+    @org.hibernate.annotations.Comment("자식 댓글")
+    @OneToMany(mappedBy = "commentParentIdx")
+    private List<Comment> children = new ArrayList<Comment>();
 }

@@ -4,14 +4,19 @@ import kr.co.opgg.datasource.board.Board;
 import kr.co.opgg.datasource.comment.Comment;
 import kr.co.opgg.datasource.file.File;
 import kr.co.opgg.datasource.user.User;
+import kr.co.opgg.utils.date.DateUtil;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class BoardResponse {
+
+    @Autowired
+    private static DateUtil dateUtil;
 
     @Data
     @Builder
@@ -71,22 +76,22 @@ public class BoardResponse {
         private List<BoardFile> fileList;
 
         private List<CommentDetail> commentList;
-        public static BoardDetail domainToDto(Board board, List<File> fileList, List<CommentDetail> commentList){
+        public static BoardDetail domainToDto(Board board, List<Comment> commentList){
             return BoardDetail
                     .builder()
                     .boardIdx(board.getBoardIdx())
                     .title(board.getTitle())
                     .content(board.getContent())
                     .boardType(board.getBoardType())
-                    .createDate(board.getCreateDate().toString())
+                    .createDate(dateUtil.localDateTimeToString(board.getCreateDate()))
                     .level(board.getUser().getUserLevel().getLevel().getLevelLevel())
                     .nickName(board.getUser().getUserNickName())
                     .readCount(board.getReadCount())
                     .commentCount(commentList.size())
                     .boardGoodCount(board.getBoardGoodCount())
                     .badCount(board.getBadCount())
-                    .fileList(fileList.stream().map(BoardFile::domainToDto).collect(Collectors.toList()))
-                    .commentList(commentList)
+                    .fileList(board.getFiles().stream().map(file -> BoardFile.domainToDto(file)).collect(Collectors.toList()))
+                    .commentList(commentList.stream().map(comment -> CommentDetail.domainToDto(comment)).collect(Collectors.toList()))
                     .build();
         }
     }
@@ -120,7 +125,7 @@ public class BoardResponse {
 
         private String commentContent;
 
-        private List<Comment> commentList;
+        private List<CommentDetail> commentList;
 
         public static CommentDetail domainToDto(Comment comment){
             return CommentDetail
@@ -128,7 +133,11 @@ public class BoardResponse {
                     .commentIdx(comment.getCommentIdx())
                     .level(comment.getUser().getUserLevel().getLevel().getLevelLevel())
                     .nickName(comment.getUser().getUserNickName())
-                    .createDate(comment.getCreateDate().toString())
+                    .createDate(dateUtil.localDateTimeToString(comment.getCreateDate()))
+                    .commentList((comment.getChildren() != null && comment.getChildren().size() != 0) ?
+                            comment.getChildren().stream().map(c -> CommentDetail.domainToDto(c)).collect(Collectors.toList())
+                            : null
+                    )
                     .commentContent(comment.getCommentContent())
                     .build();
         }

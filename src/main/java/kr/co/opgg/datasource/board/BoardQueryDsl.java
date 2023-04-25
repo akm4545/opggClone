@@ -1,16 +1,11 @@
 package kr.co.opgg.datasource.board;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.jpa.sql.JPASQLQuery;
 import com.querydsl.sql.*;
 import kr.co.opgg.datasource.comment.Comment;
 import kr.co.opgg.datasource.comment.QComment;
-import kr.co.opgg.datasource.level.QLevel;
-import kr.co.opgg.datasource.user.QUser;
-import kr.co.opgg.datasource.user_level.QUserLevel;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
