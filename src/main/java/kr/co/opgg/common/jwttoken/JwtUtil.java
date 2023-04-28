@@ -1,14 +1,19 @@
 package kr.co.opgg.common.jwttoken;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import kr.co.opgg.apis.user.dto.UserRequest;
+import kr.co.opgg.common.exception.JwtTokenException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.security.Key;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.Date;
 
 @Component
@@ -20,6 +25,8 @@ public class JwtUtil {
     public static final String ACCESS_TOKEN = "Access_Token";
     public static final String REFERSH_TOKEN = "Refersh_Token";
     private static final String SECRET_KEY = "happilyeverafterhappilyeverafterdasgsadgasdgsadgasdgsdag";
+    
+
 
 
     private String secretKey = SECRET_KEY;
@@ -33,21 +40,48 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    public TokenDto createAllToken(String userId){
-        return new TokenDto(createToken(userId, "Access"), createToken(userId, "Refresh"));
+    public TokenDto createAllToken(UserRequest user){
+        return new TokenDto(createToken(user, "Access"), createToken(user, "Refresh"));
     }
 
-    public String createToken(String userId, String type){
+    public String createToken(UserRequest user, String type){
         Date date = new Date();
 
         Long time = type.equals("Access") ? ACCESS_TIME : REFRESH_TIME;
 
         return Jwts.builder()
-                .setSubject(userId)
+                .setSubject(String.valueOf(user.getUserId()))
+                .claim("roleType", user.getAuthorityIdx())
                 .setExpiration(new Date(date.getTime() + time))
                 .setIssuedAt(date)
                 .signWith(key, signatureAlgorithm)
                 .compact();
     }
 
+    public Authentication getAuthentication(String token){
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        Collection<? extends GrantedAuthority> authorite =
+                (Collection<? extends GrantedAuthority>) claims.get("roleType");
+
+        CustomUserDetails userInfo = new CustomUserDetails();
+        userInfo.setUserIdx(Long.valueOf(claims.getSubject()));
+
+        return new UsernamePasswordAuthenticationToken(userInfo, token, authorite);
+    }
+
+    public boolean validateToken(String jwtToken) {
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwtToken);
+            return true;
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            throw new JwtTokenException.TokenParseException();
+        } catch (ExpiredJwtException e) {
+            throw new JwtTokenException.ExpiredToken();
+        }
+    }
 }
