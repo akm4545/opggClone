@@ -12,6 +12,7 @@ import javax.validation.constraints.Size;
 @ToString
 public class UserRequest {
 
+    private Long userIdx;
     @NotBlank
     private String userId;
 
@@ -24,13 +25,12 @@ public class UserRequest {
 
     private String userPolicyYN;
 
-    private String authorityIdx;
-
-
+    private int authorityIdx;
 
 
     @Builder
-    public UserRequest(String userId, String userPw, String userPhone, String userNickName, String userPolicyYN, String authorityIdx){
+    public UserRequest(Long userIdx, String userId, String userPw, String userPhone, String userNickName, String userPolicyYN, int authorityIdx){
+        this.userIdx = userIdx;
         this.userId = userId;
         this.userPw = userPw;
         this.userNickName = userNickName;
