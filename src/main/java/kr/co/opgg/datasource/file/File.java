@@ -20,7 +20,7 @@ public class File {
     @Id
     @GeneratedValue
     @Column(name = "FILE_IDX")
-    private Long fileIdx;
+    private Integer fileIdx;
 
     @Column(name = "FILE_NAME")
     private String fileName;

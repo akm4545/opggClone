@@ -11,6 +11,7 @@ import kr.co.opgg.datasource.board.Board;
 import kr.co.opgg.datasource.board.BoardQueryDsl;
 import kr.co.opgg.datasource.board.BoardRepository;
 import kr.co.opgg.datasource.comment.Comment;
+import kr.co.opgg.datasource.file.File;
 import kr.co.opgg.datasource.user.User;
 import kr.co.opgg.datasource.user.UserRepository;
 import kr.co.opgg.utils.pagination.PageUtil;
@@ -139,6 +140,26 @@ public class BoardService {
         if(removeFileList != null && removeFileList.size() != 0){
             commonService.fileDelete(removeFileList);
         }
+
+        return responseService.getSuccessResult();
+    }
+
+    @Transactional
+    public CommonResult deleteBoard(BoardRequest.Board deleteBoard){
+        Integer boardIdx = deleteBoard.getBoardIdx();
+        Board board = boardRepository.findById(boardIdx).orElseThrow(() -> DOES_NOT_EXIST_EXCEPTION);
+
+        Integer userIdx = Integer.parseInt(String.valueOf(board.getUser().getUserIdx()));
+
+        if(!userUtil.isWriter(userIdx)){
+            throw ABNORMAL_ACCESS_EXCEPTION;
+        }
+
+        List<File> deleteFileList = board.getFiles();
+        List<Integer> deleteFileIdxList = deleteFileList.stream().map(File::getFileIdx).collect(Collectors.toList());
+
+        commonService.fileDelete(deleteFileIdxList);
+        boardRepository.delete(board);
 
         return responseService.getSuccessResult();
     }

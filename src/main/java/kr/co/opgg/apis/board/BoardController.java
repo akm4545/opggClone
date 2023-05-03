@@ -52,4 +52,11 @@ public class BoardController {
 
         return ResponseEntity.ok(boardService.updateBoard(multipartFileList, board));
     }
+
+    @DeleteMapping("/{boardIdx}")
+    public ResponseEntity<CommonResult> deleteBoard(@Valid BoardRequest.Board board, BindingResult bindingResult){
+        ValidateUtil.validateBindingResult(bindingResult);
+
+        return ResponseEntity.ok(boardService.deleteBoard(board));
+    }
 }
