@@ -24,16 +24,24 @@ public class Ad extends Date {
     @Column(name = "AD_LINK")
     private String adLink;
 
+    @Column(name = "AD_STARTDATE")
+    private String adStartDate;
+
+    @Column(name = "AD_ENDDATE")
+    private String adEndDate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_IDX")
     private User user;
 
     @Builder
-    public Ad (Long adIdx, String adTitle, String adLink, User user){
+    public Ad (Long adIdx, String adTitle, String adLink, User user, String adStartDate, String adEndDate){
         this.adIdx = adIdx;
         this.adTitle = adTitle;
         this.adLink = adLink;
         this.user = user;
+        this.adStartDate = adStartDate;
+        this.adEndDate = adEndDate;
         if(user != null && user.getAds().contains(this)){
             user.getAds().add(this);
         }
