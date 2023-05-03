@@ -2,6 +2,7 @@ package kr.co.opgg.apis.board;
 
 import kr.co.opgg.apis.board.dto.BoardRequest;
 import kr.co.opgg.apis.board.dto.BoardResponse;
+import kr.co.opgg.apis.common.dto.CommonResult;
 import kr.co.opgg.apis.common.dto.ListResult;
 import kr.co.opgg.apis.common.dto.PageResult;
 import kr.co.opgg.apis.common.dto.SingleResult;
@@ -42,7 +43,7 @@ public class BoardController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<SingleResult<BoardResponse.BoardDetail>> insertBoard(List<MultipartFile> multipartFileList, @Valid BoardRequest.BoardDetail board, BindingResult bindingResult){
+    public ResponseEntity<CommonResult> insertBoard(List<MultipartFile> multipartFileList, @Valid BoardRequest.BoardDetail board, BindingResult bindingResult){
         ValidateUtil.validateBindingResult(bindingResult);
 
         return ResponseEntity.ok(boardService.insertBoard(multipartFileList, board));

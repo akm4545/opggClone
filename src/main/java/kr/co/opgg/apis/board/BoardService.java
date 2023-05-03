@@ -4,6 +4,7 @@ import kr.co.opgg.apis.board.dto.BoardRequest;
 import kr.co.opgg.apis.board.dto.BoardResponse;
 import kr.co.opgg.apis.common.CommonService;
 import kr.co.opgg.apis.common.ResponseService;
+import kr.co.opgg.apis.common.dto.CommonResult;
 import kr.co.opgg.apis.common.dto.PageResult;
 import kr.co.opgg.apis.common.dto.SingleResult;
 import kr.co.opgg.common.exception.CommonException;
@@ -11,6 +12,8 @@ import kr.co.opgg.datasource.board.Board;
 import kr.co.opgg.datasource.board.BoardQueryDsl;
 import kr.co.opgg.datasource.board.BoardRepository;
 import kr.co.opgg.datasource.comment.Comment;
+import kr.co.opgg.datasource.user.User;
+import kr.co.opgg.datasource.user.UserRepository;
 import kr.co.opgg.utils.pagination.PageUtil;
 import kr.co.opgg.utils.date.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +48,9 @@ public class BoardService {
 
     @Autowired
     private CommonService commonService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Value("board.upload.path")
     private String filePath;
@@ -84,21 +90,24 @@ public class BoardService {
     }
 
     @Transactional
-    public SingleResult<BoardResponse.BoardDetail> insertBoard(List<MultipartFile> multipartFileList, BoardRequest.BoardDetail boardDetail){
+    public CommonResult insertBoard(List<MultipartFile> multipartFileList, BoardRequest.BoardDetail boardDetail){
+        //토큰에서 정보 추출해야함
+        User user = userRepository.getReferenceById(1);
+
         Board board = Board
                 .builder()
                 .boardType(boardDetail.getBoardType())
                 .title(boardDetail.getTitle())
                 .content(boardDetail.getContent())
+                .user(user)
                 .build();
 
         boardRepository.save(board);
 
-        //빈값 체크 유틸을 만들어야 하는지
         if(multipartFileList != null && multipartFileList.size() != 0){
             commonService.fileUpload(multipartFileList, filePath, board ,fileType);
         }
 
-        return null;
+        return responseService.getSuccessResult();
     }
 }
