@@ -17,19 +17,4 @@ public class BoardCheck {
             return false;
         }
     }
-
-    public Boolean isChildComment(Comment comment){
-        if(comment.getCommentParentIdx() != null){
-            return true;
-        }else{
-            return false;
-        }
-    }
-    public Boolean isParentComment(Comment comment, Comment childComment){
-        if(comment.getCommentIdx().equals(childComment.getCommentParentIdx())){
-            return true;
-        }else{
-            return false;
-        }
-    }
 }

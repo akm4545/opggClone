@@ -14,6 +14,9 @@ public class CommonException {
     public static final DoesNotExistException DOES_NOT_EXIST_EXCEPTION =
             new DoesNotExistException();
 
+    public static final AbnormalAccessException ABNORMAL_ACCESS_EXCEPTION =
+            new AbnormalAccessException();
+
     @Getter
     public static class EmptyParamsException extends RuntimeException {
         private final CommonErrorCodeAndMessage errorCodeAndMessage =
@@ -32,5 +35,11 @@ public class CommonException {
     public static class DoesNotExistException extends RuntimeException {
         private final CommonErrorCodeAndMessage errorCodeAndMessage =
                 CommonErrorCodeAndMessage.DoesNotExist;
+    }
+
+    @Getter
+    public static class AbnormalAccessException extends RuntimeException {
+        private final CommonErrorCodeAndMessage errorCodeAndMessage =
+                CommonErrorCodeAndMessage.AbnormalAccess;
     }
 }

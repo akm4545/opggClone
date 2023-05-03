@@ -15,6 +15,7 @@ import kr.co.opgg.datasource.user.User;
 import kr.co.opgg.datasource.user.UserRepository;
 import kr.co.opgg.utils.pagination.PageUtil;
 import kr.co.opgg.utils.date.DateUtil;
+import kr.co.opgg.utils.user.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -52,6 +53,9 @@ public class BoardService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserUtil userUtil;
 
     @Value("board.upload.path")
     private String filePath;
@@ -116,6 +120,12 @@ public class BoardService {
     public CommonResult updateBoard(List<MultipartFile> multipartFileList, BoardRequest.BoardDetailUpdate boardDetail){
         Integer boardIdx = boardDetail.getBoardIdx();
         Board board = boardRepository.findById(boardIdx).orElseThrow(() -> DOES_NOT_EXIST_EXCEPTION);
+
+        Integer userIdx = Integer.parseInt(String.valueOf(board.getUser().getUserIdx()));
+
+        if(!userUtil.isWriter(userIdx)){
+            throw ABNORMAL_ACCESS_EXCEPTION;
+        }
 
         board.setTitle(boardDetail.getTitle());
         board.setContent(boardDetail.getContent());
