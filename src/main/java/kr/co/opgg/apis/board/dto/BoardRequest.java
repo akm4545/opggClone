@@ -31,4 +31,21 @@ public class BoardRequest {
         @NotNull
         private String content;
     }
+
+    @Data
+    public static class BoardDetailUpdate{
+        @NotNull
+        private Integer boardIdx;
+
+        @NotNull
+        private String title;
+
+        @NotNull
+        private String boardType;
+
+        @NotNull
+        private String content;
+
+        List<Integer> removeFileList;
+    }
 }

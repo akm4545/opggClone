@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import kr.co.opgg.utils.validate.ValidateUtil;
@@ -47,5 +44,12 @@ public class BoardController {
         ValidateUtil.validateBindingResult(bindingResult);
 
         return ResponseEntity.ok(boardService.insertBoard(multipartFileList, board));
+    }
+
+    @PutMapping("/{boardIdx}")
+    public ResponseEntity<CommonResult> updateBoard(List<MultipartFile> multipartFileList, @Valid BoardRequest.BoardDetailUpdate board, BindingResult bindingResult){
+        ValidateUtil.validateBindingResult(bindingResult);
+
+        return ResponseEntity.ok(boardService.updateBoard(multipartFileList, board));
     }
 }

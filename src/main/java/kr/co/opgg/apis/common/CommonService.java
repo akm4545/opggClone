@@ -4,6 +4,7 @@ import kr.co.opgg.apis.comment.dto.CommentRequest;
 import kr.co.opgg.apis.common.dto.CommonRequest;
 import kr.co.opgg.apis.common.dto.CommonResult;
 import kr.co.opgg.datasource.board.Board;
+import kr.co.opgg.datasource.file.FileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -19,6 +21,8 @@ import java.util.stream.Collectors;
 @Service
 public class CommonService {
     private final ResponseService responseService;
+
+    private final FileRepository fileRepository;
 
     public CommonResult healthCheck() {
         return responseService.getSuccessResult();
@@ -48,11 +52,12 @@ public class CommonService {
                     .build();
         }).collect(Collectors.toList());
 
+        List<kr.co.opgg.datasource.file.File> uploadFileData = new ArrayList<kr.co.opgg.datasource.file.File>();
 
         if(type.equals("BOARD")){
             Board board = (Board) domain;
 
-            List<kr.co.opgg.datasource.file.File> uploadFileData = fileList
+            uploadFileData = fileList
                     .stream()
                     .map(uploadFile ->
                             kr.co.opgg.datasource.file.File
@@ -63,6 +68,28 @@ public class CommonService {
                                     .build())
                     .collect(Collectors.toList());
         }
+
+        fileRepository.saveAll(uploadFileData);
+
+        return true;
+    }
+
+    @Transactional
+    public Boolean fileDelete(List<Integer> deleteFileList){
+        List<kr.co.opgg.datasource.file.File> deleteFileEntityList = fileRepository.findAllById(deleteFileList);
+
+        deleteFileEntityList.stream().forEach(file -> {
+            String fileDirectory = file.getFileDirectory();
+            String fileName = file.getFileName();
+
+            File deleteFile = new File(fileDirectory + "\\" + fileName);
+
+            if(deleteFile.exists()){
+                deleteFile.delete();
+            }
+        });
+
+        fileRepository.deleteAllById(deleteFileList);
 
         return true;
     }

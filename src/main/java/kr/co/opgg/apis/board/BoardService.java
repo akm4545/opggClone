@@ -7,7 +7,6 @@ import kr.co.opgg.apis.common.ResponseService;
 import kr.co.opgg.apis.common.dto.CommonResult;
 import kr.co.opgg.apis.common.dto.PageResult;
 import kr.co.opgg.apis.common.dto.SingleResult;
-import kr.co.opgg.common.exception.CommonException;
 import kr.co.opgg.datasource.board.Board;
 import kr.co.opgg.datasource.board.BoardQueryDsl;
 import kr.co.opgg.datasource.board.BoardRepository;
@@ -27,6 +26,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static kr.co.opgg.common.exception.CommonException.*;
 
 @Service
 public class BoardService {
@@ -83,7 +84,7 @@ public class BoardService {
     public SingleResult<BoardResponse.BoardDetail> selectBoard(BoardRequest.Board board) {
         Integer boardIdx = board.getBoardIdx();
 
-        Board boardDetail = boardRepository.findById(boardIdx).orElseThrow(() -> CommonException.DOES_NOT_EXIST_EXCEPTION);
+        Board boardDetail = boardRepository.findById(boardIdx).orElseThrow(() -> DOES_NOT_EXIST_EXCEPTION);
         List<Comment> commentList = boardQueryDsl.selectCommentList(boardIdx);
 
         return responseService.getSingleResult(BoardResponse.BoardDetail.domainToDto(boardDetail, commentList));
@@ -106,6 +107,27 @@ public class BoardService {
 
         if(multipartFileList != null && multipartFileList.size() != 0){
             commonService.fileUpload(multipartFileList, filePath, board ,fileType);
+        }
+
+        return responseService.getSuccessResult();
+    }
+
+    @Transactional
+    public CommonResult updateBoard(List<MultipartFile> multipartFileList, BoardRequest.BoardDetailUpdate boardDetail){
+        Integer boardIdx = boardDetail.getBoardIdx();
+        Board board = boardRepository.findById(boardIdx).orElseThrow(() -> DOES_NOT_EXIST_EXCEPTION);
+
+        board.setTitle(boardDetail.getTitle());
+        board.setContent(boardDetail.getContent());
+
+        if(multipartFileList != null && multipartFileList.size() != 0){
+            commonService.fileUpload(multipartFileList, filePath, board ,fileType);
+        }
+
+        List<Integer> removeFileList = boardDetail.getRemoveFileList();
+
+        if(removeFileList != null && removeFileList.size() != 0){
+            commonService.fileDelete(removeFileList);
         }
 
         return responseService.getSuccessResult();
