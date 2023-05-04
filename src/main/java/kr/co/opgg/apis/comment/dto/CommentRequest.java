@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 public class CommentRequest {
 
     @Data
-    public static class insertComment{
+    public static class InsertComment{
         @NotNull
         Integer boardIdx;
 
@@ -18,7 +18,7 @@ public class CommentRequest {
     }
 
     @Data
-    public static class updateComment{
+    public static class UpdateComment{
         @NotNull
         Integer boardIdx;
 
@@ -30,10 +30,16 @@ public class CommentRequest {
     }
 
     @Data
-    public static class deleteComment{
+    public static class DeleteComment{
         @NotNull
         Integer boardIdx;
 
+        @NotNull
+        Integer commentIdx;
+    }
+
+    @Data
+    public static class RecommendComment{
         @NotNull
         Integer commentIdx;
     }

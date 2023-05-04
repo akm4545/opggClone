@@ -66,7 +66,7 @@ public class BoardService {
     @Value("board.upload.path")
     private String filePath;
 
-    private final String fileType = "BOARD";
+    private final String type = "BOARD";
 
     public PageResult<BoardResponse.BoardList> selectBoardList(BoardRequest.BoardListSearchCondition searchCondition, Pageable pageable) {
         String sort = searchCondition.getSort();
@@ -116,7 +116,7 @@ public class BoardService {
         boardRepository.save(board);
 
         if(multipartFileList != null && multipartFileList.size() != 0){
-            commonService.fileUpload(multipartFileList, filePath, board ,fileType);
+            commonService.fileUpload(multipartFileList, filePath, board ,type);
         }
 
         return responseService.getSuccessResult();
@@ -137,7 +137,7 @@ public class BoardService {
         board.setContent(boardDetail.getContent());
 
         if(multipartFileList != null && multipartFileList.size() != 0){
-            commonService.fileUpload(multipartFileList, filePath, board ,fileType);
+            commonService.fileUpload(multipartFileList, filePath, board ,type);
         }
 
         List<Integer> removeFileList = boardDetail.getRemoveFileList();
@@ -174,11 +174,12 @@ public class BoardService {
         Integer userIdx = 0;
         Integer boardIdx = board.getBoardIdx();
 
-        RecommendedLog recommendedLog = recommendedLogRepository.findByBoardIdxAndUserIdx(userIdx, boardIdx).get();
+        RecommendedLog recommendedLog = recommendedLogRepository.findByTargetIdxAndUserIdxAndType(userIdx, boardIdx, type).get();
 
         if(recommendedLog == null){
             recommendedLog = RecommendedLog.builder()
-                    .boardIdx(boardIdx)
+                    .targetIdx(boardIdx)
+                    .type(type)
                     .userIdx(userIdx)
                     .build();
 

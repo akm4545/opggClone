@@ -1,5 +1,6 @@
 package kr.co.opgg.apis.comment;
 
+import kr.co.opgg.apis.board.dto.BoardRequest;
 import kr.co.opgg.apis.comment.dto.CommentRequest;
 import kr.co.opgg.apis.common.ResponseService;
 import kr.co.opgg.apis.common.dto.CommonResult;
@@ -7,6 +8,8 @@ import kr.co.opgg.datasource.board.Board;
 import kr.co.opgg.datasource.board.BoardRepository;
 import kr.co.opgg.datasource.comment.Comment;
 import kr.co.opgg.datasource.comment.CommentRepository;
+import kr.co.opgg.datasource.recommended_log.RecommendedLog;
+import kr.co.opgg.datasource.recommended_log.RecommendedLogRepository;
 import kr.co.opgg.datasource.user.User;
 import kr.co.opgg.datasource.user.UserRepository;
 import kr.co.opgg.utils.user.UserUtil;
@@ -38,8 +41,13 @@ public class CommentService {
     @Autowired
     private UserUtil userUtil;
 
+    @Autowired
+    private RecommendedLogRepository recommendedLogRepository;
+
+    private final String type = "COMMENT";
+
     @Transactional
-    public CommonResult insertComment(CommentRequest.insertComment insertComment) {
+    public CommonResult insertComment(CommentRequest.InsertComment insertComment) {
         Integer userIdx = 0;
         User user = userRepository.getReferenceById(userIdx);
 
@@ -59,7 +67,7 @@ public class CommentService {
     }
 
     @Transactional
-    public CommonResult updateComment(CommentRequest.updateComment updateComment) {
+    public CommonResult updateComment(CommentRequest.UpdateComment updateComment) {
         Integer commentIdx = updateComment.getCommentIdx();
         Comment comment = commentRepository.findById(commentIdx).orElseThrow(() -> DOES_NOT_EXIST_EXCEPTION);
 
@@ -75,7 +83,7 @@ public class CommentService {
     }
 
     @Transactional
-    public CommonResult deleteComment(CommentRequest.deleteComment deleteComment) {
+    public CommonResult deleteComment(CommentRequest.DeleteComment deleteComment) {
         Integer commentIdx = deleteComment.getCommentIdx();
         Comment comment = commentRepository.findById(commentIdx).orElseThrow(() -> DOES_NOT_EXIST_EXCEPTION);
 
@@ -91,6 +99,28 @@ public class CommentService {
 
         if(!childCommentList.isEmpty()){
             commentRepository.deleteAll(childCommentList);
+        }
+
+        return responseService.getSuccessResult();
+    }
+
+    @Transactional
+    public CommonResult recommendComment(CommentRequest.RecommendComment recommendComment) {
+        Integer userIdx = 0;
+        Integer commentIdx = recommendComment.getCommentIdx();
+
+        RecommendedLog recommendedLog = recommendedLogRepository.findByTargetIdxAndUserIdxAndType(userIdx, commentIdx, type).get();
+
+        if(recommendedLog == null){
+            recommendedLog = RecommendedLog.builder()
+                    .targetIdx(commentIdx)
+                    .type(type)
+                    .userIdx(userIdx)
+                    .build();
+
+            recommendedLogRepository.save(recommendedLog);
+        }else{
+            recommendedLogRepository.delete(recommendedLog);
         }
 
         return responseService.getSuccessResult();

@@ -22,24 +22,31 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
-    @PostMapping("/comment")
-    public ResponseEntity<CommonResult> insertComment(@RequestBody @Valid CommentRequest.insertComment insertComment, BindingResult bindingResult){
+    @PostMapping("/{boardIdx}/comment")
+    public ResponseEntity<CommonResult> insertComment(@RequestBody @Valid CommentRequest.InsertComment insertComment, BindingResult bindingResult){
         ValidateUtil.validateBindingResult(bindingResult);
 
         return ResponseEntity.ok(commentService.insertComment(insertComment));
     }
 
     @PutMapping("/{boardIdx}/comment/{commentIdx}")
-    public ResponseEntity<CommonResult> updateComment(@RequestBody @Valid CommentRequest.updateComment updateComment, BindingResult bindingResult){
+    public ResponseEntity<CommonResult> updateComment(@RequestBody @Valid CommentRequest.UpdateComment updateComment, BindingResult bindingResult){
         ValidateUtil.validateBindingResult(bindingResult);
 
         return ResponseEntity.ok(commentService.updateComment(updateComment));
     }
 
     @DeleteMapping("/{boardIdx}/comment/{commentIdx}")
-    public ResponseEntity<CommonResult> deleteComment(@Valid CommentRequest.deleteComment deleteComment, BindingResult bindingResult){
+    public ResponseEntity<CommonResult> deleteComment(@Valid CommentRequest.DeleteComment deleteComment, BindingResult bindingResult){
         ValidateUtil.validateBindingResult(bindingResult);
 
         return ResponseEntity.ok(commentService.deleteComment(deleteComment));
+    }
+
+    @PostMapping("/{boardIdx}/comment/{commentIdx}/recommend")
+    public ResponseEntity<CommonResult> recommendComment(@Valid CommentRequest.RecommendComment recommendComment, BindingResult bindingResult){
+        ValidateUtil.validateBindingResult(bindingResult);
+
+        return ResponseEntity.ok(commentService.recommendComment(recommendComment));
     }
 }

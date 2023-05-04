@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface RecommendedLogRepository extends JpaRepository<RecommendedLog, Integer> {
-    Optional<RecommendedLog> findByBoardIdxAndUserIdx(Integer userIdx, Integer boardIdx);
+    Optional<RecommendedLog> findByTargetIdxAndUserIdxAndType(Integer userIdx, Integer boardIdx, String type);
 
 }

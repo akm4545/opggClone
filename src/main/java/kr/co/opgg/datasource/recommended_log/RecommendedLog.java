@@ -27,7 +27,7 @@ public class RecommendedLog extends Date {
     @Comment("타입")
     private String type;
 
-    @Comment("게시글 인덱스")
-    @Column(name = "board_idx")
-    private Integer boardIdx;
+    @Comment("타겟 인덱스")
+    @Column(name = "target_idx")
+    private Integer targetIdx;
 }
