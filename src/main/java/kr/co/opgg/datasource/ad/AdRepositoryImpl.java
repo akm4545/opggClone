@@ -12,16 +12,5 @@ public class AdRepositoryImpl implements AdRepositoryCustom{
 
     private JPAQueryFactory query;
 
-    @Override
-    public List<Ad> findByStartDateBetweenEndDate(String toDay) {
-//        return query.select(Projections.fields(AdResponse.class,
-//                ad.adIdx
-//                ,ad.adLink
-//                ,ad.adTitle
-//                ,ad.user.userIdx))
-//                .from(ad)
 
-
-        return null;
-    }
 }

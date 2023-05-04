@@ -25,9 +25,7 @@ public class AdService {
     private final ResponseService responseService;
     public ListResult<AdResponse> findAllAd() {
 
-        String toDay = LocalDateTime.now().toString().split("T")[0];
-
-        List<Ad> adList = adRepository.findByStartDateBetweenEndDate(toDay);
+        List<Ad> adList = adRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(new Date(), new Date());
 
         return responseService.getListResult(adList.stream()
                 .map(ad -> {

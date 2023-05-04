@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -59,11 +60,7 @@ public class JwtUtil {
     }
 
     public Authentication getAuthentication(String token){
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        Claims claims = tokenParser(token);
 
         Collection<? extends GrantedAuthority> authorite =
                 (Collection<? extends GrantedAuthority>) claims.get("roleType");
@@ -83,5 +80,18 @@ public class JwtUtil {
         } catch (ExpiredJwtException e) {
             throw new JwtTokenException.ExpiredToken();
         }
+    }
+
+    public Claims tokenParser(String token){
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public Long getUserIdx() {
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return user.getUserIdx();
     }
 }
