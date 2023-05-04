@@ -9,9 +9,13 @@ import kr.co.opgg.datasource.comment.Comment;
 import kr.co.opgg.datasource.comment.CommentRepository;
 import kr.co.opgg.datasource.user.User;
 import kr.co.opgg.datasource.user.UserRepository;
+import kr.co.opgg.utils.user.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static kr.co.opgg.common.exception.CommonException.ABNORMAL_ACCESS_EXCEPTION;
+import static kr.co.opgg.common.exception.CommonException.DOES_NOT_EXIST_EXCEPTION;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,6 +33,9 @@ public class CommentService {
     @Autowired
     private BoardRepository boardRepository;
 
+    @Autowired
+    private UserUtil userUtil;
+
     @Transactional
     public CommonResult insertComment(CommentRequest.insertComment insertComment) {
         Integer userIdx = 0;
@@ -45,6 +52,22 @@ public class CommentService {
                 .build();
 
         commentRepository.save(comment);
+
+        return responseService.getSuccessResult();
+    }
+
+    @Transactional
+    public CommonResult updateComment(CommentRequest.updateComment updateComment) {
+        Integer commentIdx = updateComment.getCommentIdx();
+        Comment comment = commentRepository.findById(commentIdx).orElseThrow(() -> DOES_NOT_EXIST_EXCEPTION);
+
+        Integer userIdx = Integer.parseInt(String.valueOf(comment.getUser().getUserIdx()));
+
+        if(!userUtil.isWriter(userIdx)){
+            throw ABNORMAL_ACCESS_EXCEPTION;
+        }
+
+        comment.setCommentContent(updateComment.getCommentContent());
 
         return responseService.getSuccessResult();
     }

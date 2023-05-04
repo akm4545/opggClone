@@ -16,4 +16,16 @@ public class CommentRequest {
         @NotNull
         String commentContent;
     }
+
+    @Data
+    public static class updateComment{
+        @NotNull
+        Integer boardIdx;
+
+        @NotNull
+        Integer commentIdx;
+
+        @NotNull
+        String commentContent;
+    }
 }

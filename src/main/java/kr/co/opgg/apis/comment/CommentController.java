@@ -7,23 +7,28 @@ import kr.co.opgg.utils.validate.ValidateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/board/comment")
+@RequestMapping("/board")
 public class CommentController {
 
     @Autowired
     private CommentService commentService;
 
-    @PostMapping
-    public ResponseEntity<CommonResult> insertComment(@Valid CommentRequest.insertComment insertComment, BindingResult bindingResult){
+    @PostMapping("/comment")
+    public ResponseEntity<CommonResult> insertComment(@RequestBody @Valid CommentRequest.insertComment insertComment, BindingResult bindingResult){
         ValidateUtil.validateBindingResult(bindingResult);
 
         return ResponseEntity.ok(commentService.insertComment(insertComment));
+    }
+
+    @PutMapping("/{boardIdx}/comment/{commentIdx}")
+    public ResponseEntity<CommonResult> updateComment(@RequestBody @Valid CommentRequest.updateComment updateComment, BindingResult bindingResult){
+        ValidateUtil.validateBindingResult(bindingResult);
+
+        return ResponseEntity.ok(commentService.updateComment(updateComment));
     }
 }
