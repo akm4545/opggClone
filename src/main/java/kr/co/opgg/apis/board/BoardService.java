@@ -12,6 +12,8 @@ import kr.co.opgg.datasource.board.BoardQueryDsl;
 import kr.co.opgg.datasource.board.BoardRepository;
 import kr.co.opgg.datasource.comment.Comment;
 import kr.co.opgg.datasource.file.File;
+import kr.co.opgg.datasource.recommended_log.RecommendedLog;
+import kr.co.opgg.datasource.recommended_log.RecommendedLogRepository;
 import kr.co.opgg.datasource.user.User;
 import kr.co.opgg.datasource.user.UserRepository;
 import kr.co.opgg.utils.pagination.PageUtil;
@@ -57,6 +59,9 @@ public class BoardService {
 
     @Autowired
     private UserUtil userUtil;
+
+    @Autowired
+    private RecommendedLogRepository recommendedLogRepository;
 
     @Value("board.upload.path")
     private String filePath;
@@ -160,6 +165,27 @@ public class BoardService {
 
         commonService.fileDelete(deleteFileIdxList);
         boardRepository.delete(board);
+
+        return responseService.getSuccessResult();
+    }
+
+    @Transactional
+    public CommonResult recommend(BoardRequest.Board board) {
+        Integer userIdx = 0;
+        Integer boardIdx = board.getBoardIdx();
+
+        RecommendedLog recommendedLog = recommendedLogRepository.findByBoardIdxAndUserIdx(userIdx, boardIdx).get();
+
+        if(recommendedLog == null){
+            recommendedLog = RecommendedLog.builder()
+                    .boardIdx(boardIdx)
+                    .userIdx(userIdx)
+                    .build();
+
+            recommendedLogRepository.save(recommendedLog);
+        }else{
+            recommendedLogRepository.delete(recommendedLog);
+        }
 
         return responseService.getSuccessResult();
     }

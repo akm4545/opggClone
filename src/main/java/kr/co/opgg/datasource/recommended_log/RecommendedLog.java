@@ -1,9 +1,7 @@
 package kr.co.opgg.datasource.recommended_log;
 
 import kr.co.opgg.datasource.common.Date;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Comment;
 
 import javax.persistence.*;
@@ -11,8 +9,10 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "RECOMMENDED_LOG")
+@Builder
 public class RecommendedLog extends Date {
     @Id
     @Comment("추천 로그 인덱스")
