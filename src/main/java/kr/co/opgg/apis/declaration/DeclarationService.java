@@ -45,4 +45,21 @@ public class DeclarationService {
 
         return responseService.getSuccessResult();
     }
+
+    public CommonResult declarationComment(DeclarationRequest.DeclarationComment declarationComment) {
+        Integer userIdx = 0;
+        User user = userRepository.getReferenceById(userIdx);
+
+        Declaration declaration = Declaration.builder()
+                .user(user)
+                .declarationContent(declarationComment.getDeclarationContent())
+                .declarationTargetType(commentType)
+                .declarationTargetIdx(declarationComment.getCommentIdx())
+                .user(user)
+                .build();
+
+        declarationRepository.save(declaration);
+
+        return responseService.getSuccessResult();
+    }
 }

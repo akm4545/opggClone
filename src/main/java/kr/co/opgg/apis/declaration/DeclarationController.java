@@ -24,4 +24,10 @@ public class DeclarationController {
         return ResponseEntity.ok(declarationService.declarationBoard(board));
     }
 
+    @PostMapping("/board/{boardIdx}/comment/{commentIdx}/declaration")
+    public ResponseEntity<CommonResult> declarationComment(@RequestBody @Valid DeclarationRequest.DeclarationComment declarationComment, BindingResult bindingResult){
+        ValidateUtil.validateBindingResult(bindingResult);
+
+        return ResponseEntity.ok(declarationService.declarationComment(declarationComment));
+    }
 }
