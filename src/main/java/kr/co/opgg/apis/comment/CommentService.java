@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static kr.co.opgg.common.exception.CommonException.ABNORMAL_ACCESS_EXCEPTION;
 import static kr.co.opgg.common.exception.CommonException.DOES_NOT_EXIST_EXCEPTION;
 
@@ -68,6 +70,28 @@ public class CommentService {
         }
 
         comment.setCommentContent(updateComment.getCommentContent());
+
+        return responseService.getSuccessResult();
+    }
+
+    @Transactional
+    public CommonResult deleteComment(CommentRequest.deleteComment deleteComment) {
+        Integer commentIdx = deleteComment.getCommentIdx();
+        Comment comment = commentRepository.findById(commentIdx).orElseThrow(() -> DOES_NOT_EXIST_EXCEPTION);
+
+        Integer userIdx = Integer.parseInt(String.valueOf(comment.getUser().getUserIdx()));
+
+        if(!userUtil.isWriter(userIdx)){
+            throw ABNORMAL_ACCESS_EXCEPTION;
+        }
+
+        List<Comment> childCommentList = comment.getChildren();
+
+        commentRepository.deleteById(commentIdx);
+
+        if(!childCommentList.isEmpty()){
+            commentRepository.deleteAll(childCommentList);
+        }
 
         return responseService.getSuccessResult();
     }

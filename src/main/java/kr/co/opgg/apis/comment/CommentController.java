@@ -1,6 +1,7 @@
 package kr.co.opgg.apis.comment;
 
 import kr.co.opgg.apis.comment.dto.CommentRequest;
+import kr.co.opgg.apis.common.dto.CommonRequest;
 import kr.co.opgg.apis.common.dto.CommonResponse;
 import kr.co.opgg.apis.common.dto.CommonResult;
 import kr.co.opgg.utils.validate.ValidateUtil;
@@ -14,6 +15,9 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/board")
 public class CommentController {
+
+    //대댓글은 1차만 허용
+    //무한 허용시 ui가 망가짐
 
     @Autowired
     private CommentService commentService;
@@ -30,5 +34,12 @@ public class CommentController {
         ValidateUtil.validateBindingResult(bindingResult);
 
         return ResponseEntity.ok(commentService.updateComment(updateComment));
+    }
+
+    @DeleteMapping("/{boardIdx}/comment/{commentIdx}")
+    public ResponseEntity<CommonResult> deleteComment(@Valid CommentRequest.deleteComment deleteComment, BindingResult bindingResult){
+        ValidateUtil.validateBindingResult(bindingResult);
+
+        return ResponseEntity.ok(commentService.deleteComment(deleteComment));
     }
 }

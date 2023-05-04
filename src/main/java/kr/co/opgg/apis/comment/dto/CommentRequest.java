@@ -28,4 +28,13 @@ public class CommentRequest {
         @NotNull
         String commentContent;
     }
+
+    @Data
+    public static class deleteComment{
+        @NotNull
+        Integer boardIdx;
+
+        @NotNull
+        Integer commentIdx;
+    }
 }
