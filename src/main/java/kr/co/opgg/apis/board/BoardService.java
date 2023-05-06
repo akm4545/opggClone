@@ -7,6 +7,7 @@ import kr.co.opgg.apis.common.ResponseService;
 import kr.co.opgg.apis.common.dto.CommonResult;
 import kr.co.opgg.apis.common.dto.PageResult;
 import kr.co.opgg.apis.common.dto.SingleResult;
+import kr.co.opgg.common.jwttoken.JwtUtil;
 import kr.co.opgg.datasource.board.Board;
 import kr.co.opgg.datasource.board.BoardQueryDsl;
 import kr.co.opgg.datasource.board.BoardRepository;
@@ -63,6 +64,9 @@ public class BoardService {
     @Autowired
     private RecommendedLogRepository recommendedLogRepository;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     @Value("board.upload.path")
     private String filePath;
 
@@ -102,8 +106,8 @@ public class BoardService {
 
     @Transactional
     public CommonResult insertBoard(List<MultipartFile> multipartFileList, BoardRequest.BoardDetail boardDetail){
-        //토큰에서 정보 추출해야함
-        User user = userRepository.getReferenceById(1);
+        Integer userIdx = Integer.parseInt(String.valueOf(jwtUtil.getUserIdx()));
+        User user = userRepository.getReferenceById(userIdx);
 
         Board board = Board
                 .builder()
@@ -171,7 +175,7 @@ public class BoardService {
 
     @Transactional
     public CommonResult recommend(BoardRequest.Board board) {
-        Integer userIdx = 0;
+        Integer userIdx = Integer.parseInt(String.valueOf(jwtUtil.getUserIdx()));
         Integer boardIdx = board.getBoardIdx();
 
         RecommendedLog recommendedLog = recommendedLogRepository.findByTargetIdxAndUserIdxAndType(userIdx, boardIdx, type).get();
