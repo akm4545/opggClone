@@ -2,9 +2,7 @@ package kr.co.opgg.datasource.qna;
 
 import kr.co.opgg.datasource.common.Date;
 import kr.co.opgg.datasource.user.User;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Comment;
 
 import javax.persistence.*;
@@ -12,8 +10,10 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "QNA")
+@Builder
 public class QNA extends Date {
     @Id
     @Comment("1:1문의 인덱스")
@@ -28,6 +28,10 @@ public class QNA extends Date {
     @Comment("1:1문의 내용")
     @Column(name = "qna_content")
     private String qnaContent;
+
+    @Comment("1:1문의 답변")
+    @Column(name = "qna_answer")
+    private String qnaAnswer;
 
     @Comment("유저")
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
