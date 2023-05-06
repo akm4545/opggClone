@@ -33,7 +33,7 @@ public class QNARequest {
     }
 
     @Data
-    public static class SelectQAN{
+    public static class QANIdx{
         @NotNull
         Integer qnaIdx;
     }

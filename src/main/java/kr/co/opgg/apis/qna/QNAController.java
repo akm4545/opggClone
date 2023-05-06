@@ -45,9 +45,16 @@ public class QNAController {
     }
 
     @GetMapping("/{qnaIdx}")
-    public ResponseEntity<SingleResult> selectQNA(@Valid QNARequest.SelectQAN qna, BindingResult bindingResult){
+    public ResponseEntity<SingleResult> selectQNA(@Valid QNARequest.QANIdx qna, BindingResult bindingResult){
         ValidateUtil.validateBindingResult(bindingResult);
 
         return ResponseEntity.ok(qnaService.selectQNA(qna));
+    }
+
+    @DeleteMapping("/{qnaIdx}")
+    public ResponseEntity<CommonResult> deleteQNA(@Valid QNARequest.QANIdx qna, BindingResult bindingResult){
+        ValidateUtil.validateBindingResult(bindingResult);
+
+        return ResponseEntity.ok(qnaService.deleteQAN(qna));
     }
 }

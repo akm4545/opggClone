@@ -88,7 +88,7 @@ public class QNAService {
         );
     }
 
-    public SingleResult<QNAResponse.SelectQna> selectQNA(QNARequest.SelectQAN selectQAN) {
+    public SingleResult<QNAResponse.SelectQna> selectQNA(QNARequest.QANIdx selectQAN) {
         Integer qnaIdx = selectQAN.getQnaIdx();
         QNA qna = qnaRepository.findById(qnaIdx).orElseThrow(() -> DOES_NOT_EXIST_EXCEPTION);
 
@@ -97,5 +97,23 @@ public class QNAService {
         userUtil.isWriter(userIdx);
 
         return responseService.getSingleResult(QNAResponse.SelectQna.domainToDto(qna));
+    }
+
+    @Transactional
+    public CommonResult deleteQAN(QNARequest.QANIdx deleteQna) {
+        Integer qnaIdx = deleteQna.getQnaIdx();
+        QNA qna = qnaRepository.findById(qnaIdx).orElseThrow(() -> DOES_NOT_EXIST_EXCEPTION);
+        String qnaAnswer = qna.getQnaAnswer();
+
+        Integer userIdx = Integer.parseInt(String.valueOf(qna.getUser().getUserIdx()));
+
+        userUtil.isWriter(userIdx);
+        if(StringUtils.isNullOrEmpty(qnaAnswer)){
+            throw NOT_UPDATE_EXCEPTION;
+        }
+
+        qnaRepository.delete(qna);
+
+        return responseService.getSuccessResult();
     }
 }
