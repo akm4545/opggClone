@@ -3,7 +3,10 @@ package kr.co.opgg.apis.qna;
 import com.mysql.cj.util.StringUtils;
 import kr.co.opgg.apis.common.ResponseService;
 import kr.co.opgg.apis.common.dto.CommonResult;
+import kr.co.opgg.apis.common.dto.ListResult;
+import kr.co.opgg.apis.common.dto.SingleResult;
 import kr.co.opgg.apis.qna.dto.QNARequest;
+import kr.co.opgg.apis.qna.dto.QNAResponse;
 import kr.co.opgg.common.jwttoken.JwtUtil;
 import kr.co.opgg.datasource.qna.QNA;
 import kr.co.opgg.datasource.qna.QNARepository;
@@ -13,6 +16,9 @@ import kr.co.opgg.utils.user.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static kr.co.opgg.common.exception.CommonException.*;
 import static kr.co.opgg.common.exception.QNAException.*;
@@ -37,7 +43,7 @@ public class QNAService {
     private UserUtil userUtil;
 
     @Transactional
-    public CommonResult insertQNA(QNARequest.insertQAN insertQna) {
+    public CommonResult insertQNA(QNARequest.InsertQAN insertQna) {
         Integer userIdx = Integer.parseInt(String.valueOf(jwtUtil.getUserIdx()));
         User user = userRepository.getReferenceById(userIdx);
 
@@ -53,7 +59,7 @@ public class QNAService {
     }
 
     @Transactional
-    public CommonResult updateQNA(QNARequest.updateQAN updateQna) {
+    public CommonResult updateQNA(QNARequest.UpdateQAN updateQna) {
         Integer qnaIdx = updateQna.getQnaIdx();
         QNA qna = qnaRepository.findById(qnaIdx).orElseThrow(() -> DOES_NOT_EXIST_EXCEPTION);
         String answer = qna.getQnaAnswer();
@@ -61,9 +67,8 @@ public class QNAService {
         User user = qna.getUser();
         Integer userIdx = Integer.parseInt(String.valueOf(user.getUserIdx()));
 
-        if(!userUtil.isWriter(userIdx)){
-            throw ABNORMAL_ACCESS_EXCEPTION;
-        }else if(StringUtils.isNullOrEmpty(answer)){
+        userUtil.isWriter(userIdx);
+        if(StringUtils.isNullOrEmpty(answer)){
             throw NOT_UPDATE_EXCEPTION;
         }
 
@@ -71,5 +76,26 @@ public class QNAService {
         qna.setQnaContent(updateQna.getQnaContent());
 
         return responseService.getSuccessResult();
+    }
+
+    public ListResult<QNAResponse.SelectQna> selectQNAList() {
+        Integer userIdx = Integer.parseInt(String.valueOf(jwtUtil.getUserIdx()));
+        List<QNA> qnaList = qnaRepository.findByUserIdx(userIdx).orElseThrow(() -> DOES_NOT_EXIST_EXCEPTION);
+
+        return responseService.getListResult(qnaList.stream()
+                .map(QNAResponse.SelectQna::domainToDto)
+                .collect(Collectors.toList())
+        );
+    }
+
+    public SingleResult<QNAResponse.SelectQna> selectQNA(QNARequest.SelectQAN selectQAN) {
+        Integer qnaIdx = selectQAN.getQnaIdx();
+        QNA qna = qnaRepository.findById(qnaIdx).orElseThrow(() -> DOES_NOT_EXIST_EXCEPTION);
+
+        Integer userIdx = Integer.parseInt(String.valueOf(qna.getUser().getUserIdx()));
+
+        userUtil.isWriter(userIdx);
+
+        return responseService.getSingleResult(QNAResponse.SelectQna.domainToDto(qna));
     }
 }

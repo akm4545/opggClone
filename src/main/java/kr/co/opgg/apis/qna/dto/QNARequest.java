@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 public class QNARequest {
 
     @Data
-    public static class insertQAN{
+    public static class InsertQAN{
         @NotNull
         String qnaTitle;
 
@@ -21,7 +21,7 @@ public class QNARequest {
     }
 
     @Data
-    public static class updateQAN{
+    public static class UpdateQAN{
         @NotNull
         Integer qnaIdx;
 
@@ -30,5 +30,11 @@ public class QNARequest {
 
         @NotNull
         String qnaContent;
+    }
+
+    @Data
+    public static class SelectQAN{
+        @NotNull
+        Integer qnaIdx;
     }
 }

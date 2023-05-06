@@ -76,9 +76,7 @@ public class CommentService {
 
         Integer userIdx = Integer.parseInt(String.valueOf(comment.getUser().getUserIdx()));
 
-        if(!userUtil.isWriter(userIdx)){
-            throw ABNORMAL_ACCESS_EXCEPTION;
-        }
+        userUtil.isWriter(userIdx);
 
         comment.setCommentContent(updateComment.getCommentContent());
 
@@ -92,9 +90,7 @@ public class CommentService {
 
         Integer userIdx = Integer.parseInt(String.valueOf(comment.getUser().getUserIdx()));
 
-        if(!userUtil.isWriter(userIdx)){
-            throw ABNORMAL_ACCESS_EXCEPTION;
-        }
+        userUtil.isWriter(userIdx);
 
         List<Comment> childCommentList = comment.getChildren();
 

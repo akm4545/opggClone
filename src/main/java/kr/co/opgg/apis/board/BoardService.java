@@ -133,9 +133,7 @@ public class BoardService {
 
         Integer userIdx = Integer.parseInt(String.valueOf(board.getUser().getUserIdx()));
 
-        if(!userUtil.isWriter(userIdx)){
-            throw ABNORMAL_ACCESS_EXCEPTION;
-        }
+        userUtil.isWriter(userIdx);
 
         board.setTitle(boardDetail.getTitle());
         board.setContent(boardDetail.getContent());
@@ -160,9 +158,7 @@ public class BoardService {
 
         Integer userIdx = Integer.parseInt(String.valueOf(board.getUser().getUserIdx()));
 
-        if(!userUtil.isWriter(userIdx)){
-            throw ABNORMAL_ACCESS_EXCEPTION;
-        }
+        userUtil.isWriter(userIdx);
 
         List<File> deleteFileList = board.getFiles();
         List<Integer> deleteFileIdxList = deleteFileList.stream().map(File::getFileIdx).collect(Collectors.toList());
