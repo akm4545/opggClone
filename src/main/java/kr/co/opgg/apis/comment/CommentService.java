@@ -1,6 +1,5 @@
 package kr.co.opgg.apis.comment;
 
-import kr.co.opgg.apis.board.dto.BoardRequest;
 import kr.co.opgg.apis.comment.dto.CommentRequest;
 import kr.co.opgg.apis.common.ResponseService;
 import kr.co.opgg.apis.common.dto.CommonResult;

@@ -19,4 +19,16 @@ public class QNARequest {
         @NotNull
         String qnaContent;
     }
+
+    @Data
+    public static class updateQAN{
+        @NotNull
+        Integer qnaIdx;
+
+        @NotNull
+        String qnaTitle;
+
+        @NotNull
+        String qnaContent;
+    }
 }

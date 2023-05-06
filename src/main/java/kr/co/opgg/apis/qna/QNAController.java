@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -29,5 +26,12 @@ public class QNAController {
         ValidateUtil.validateBindingResult(bindingResult);
 
         return ResponseEntity.ok(qnaService.insertQNA(qna));
+    }
+
+    @PutMapping("/{qnaIdx}")
+    public ResponseEntity<CommonResult> updateQNA(@Valid QNARequest.updateQAN qna, BindingResult bindingResult){
+        ValidateUtil.validateBindingResult(bindingResult);
+
+        return ResponseEntity.ok(qnaService.updateQNA(qna));
     }
 }
