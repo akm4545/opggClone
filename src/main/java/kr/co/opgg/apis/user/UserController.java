@@ -1,5 +1,6 @@
 package kr.co.opgg.apis.user;
 
+import kr.co.opgg.apis.common.dto.CommonResult;
 import kr.co.opgg.apis.common.dto.SingleResult;
 import kr.co.opgg.apis.user.dto.UserRequest;
 import kr.co.opgg.apis.user.dto.UserResponse;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -30,6 +32,16 @@ public class UserController {
         Optional.ofNullable(userResponse).orElseThrow(UserException.UserCreateException::new);
 
         return ResponseEntity.ok(userResponse);
+    }
+
+    @PutMapping("/{userIdx}")
+    public ResponseEntity<SingleResult<CommonResult>> updateUser(@Valid UserRequest.UserInfo userRequest, BindingResult bindingResult){
+        ValidateUtil.validateBindingResult(bindingResult);
+
+        CommonResult commonResult = userService.updateUser(userRequest);
+
+
+        return null;
     }
 
     @GetMapping("/{userPhone}")

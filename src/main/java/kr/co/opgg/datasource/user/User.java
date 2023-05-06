@@ -1,5 +1,6 @@
 package kr.co.opgg.datasource.user;
 
+import kr.co.opgg.apis.user.dto.UserRequest;
 import kr.co.opgg.datasource.ad.Ad;
 import kr.co.opgg.datasource.authority.Authority;
 import kr.co.opgg.datasource.board.Board;

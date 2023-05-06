@@ -2,6 +2,7 @@ package kr.co.opgg.apis.user.dto;
 
 
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -43,6 +44,21 @@ public class UserRequest {
     public static class UserPrivateRequest {
         @NotBlank
         private String userPhone;
+    }
+
+    @Data
+    public static class UserInfo {
+        @NotBlank
+        private Long userIdx;
+
+        @NotBlank
+        private String userPw;
+
+        private String userPhone;
+
+        private String userNickName;
+
+        private String userPolicyYn;
     }
 
 }
