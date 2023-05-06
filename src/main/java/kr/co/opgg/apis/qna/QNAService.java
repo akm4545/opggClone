@@ -8,6 +8,7 @@ import kr.co.opgg.apis.common.dto.SingleResult;
 import kr.co.opgg.apis.qna.dto.QNARequest;
 import kr.co.opgg.apis.qna.dto.QNAResponse;
 import kr.co.opgg.common.jwttoken.JwtUtil;
+import kr.co.opgg.datasource.answer.Answer;
 import kr.co.opgg.datasource.qna.QNA;
 import kr.co.opgg.datasource.qna.QNARepository;
 import kr.co.opgg.datasource.user.User;
@@ -62,13 +63,13 @@ public class QNAService {
     public CommonResult updateQNA(QNARequest.UpdateQAN updateQna) {
         Integer qnaIdx = updateQna.getQnaIdx();
         QNA qna = qnaRepository.findById(qnaIdx).orElseThrow(() -> DOES_NOT_EXIST_EXCEPTION);
-        String answer = qna.getQnaAnswer();
+        Answer answer = qna.getAnswer();
 
         User user = qna.getUser();
         Integer userIdx = Integer.parseInt(String.valueOf(user.getUserIdx()));
 
         userUtil.isWriter(userIdx);
-        if(StringUtils.isNullOrEmpty(answer)){
+        if(answer != null){
             throw NOT_UPDATE_EXCEPTION;
         }
 
@@ -103,12 +104,12 @@ public class QNAService {
     public CommonResult deleteQAN(QNARequest.QANIdx deleteQna) {
         Integer qnaIdx = deleteQna.getQnaIdx();
         QNA qna = qnaRepository.findById(qnaIdx).orElseThrow(() -> DOES_NOT_EXIST_EXCEPTION);
-        String qnaAnswer = qna.getQnaAnswer();
+        Answer answer = qna.getAnswer();
 
         Integer userIdx = Integer.parseInt(String.valueOf(qna.getUser().getUserIdx()));
 
         userUtil.isWriter(userIdx);
-        if(StringUtils.isNullOrEmpty(qnaAnswer)){
+        if(answer != null){
             throw NOT_UPDATE_EXCEPTION;
         }
 

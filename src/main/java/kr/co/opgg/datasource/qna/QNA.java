@@ -1,5 +1,6 @@
 package kr.co.opgg.datasource.qna;
 
+import kr.co.opgg.datasource.answer.Answer;
 import kr.co.opgg.datasource.common.Date;
 import kr.co.opgg.datasource.user.User;
 import lombok.*;
@@ -30,8 +31,8 @@ public class QNA extends Date {
     private String qnaContent;
 
     @Comment("1:1문의 답변")
-    @Column(name = "qna_answer")
-    private String qnaAnswer;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "board")
+    private Answer answer;
 
     @Comment("유저")
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
