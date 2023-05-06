@@ -3,18 +3,15 @@ package kr.co.opgg.datasource.ward;
 import kr.co.opgg.datasource.board.Board;
 import kr.co.opgg.datasource.common.Date;
 import kr.co.opgg.datasource.user.User;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Comment;
 
 import javax.persistence.*;
 
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 @Entity
 @Table(name = "WARD")
+@Builder
 public class Ward extends Date {
     @Id
     @Comment("와드 인덱스")

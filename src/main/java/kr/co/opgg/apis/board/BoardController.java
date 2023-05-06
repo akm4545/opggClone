@@ -67,4 +67,11 @@ public class BoardController {
 
         return ResponseEntity.ok(boardService.recommend(board));
     }
+
+    @PostMapping("/{boardIdx}/ward")
+    public ResponseEntity<CommonResult> boardWard(@Valid BoardRequest.Board board, BindingResult bindingResult){
+        ValidateUtil.validateBindingResult(bindingResult);
+
+        return ResponseEntity.ok(boardService.boardWard(board));
+    }
 }

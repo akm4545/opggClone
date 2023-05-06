@@ -17,6 +17,8 @@ import kr.co.opgg.datasource.recommended_log.RecommendedLog;
 import kr.co.opgg.datasource.recommended_log.RecommendedLogRepository;
 import kr.co.opgg.datasource.user.User;
 import kr.co.opgg.datasource.user.UserRepository;
+import kr.co.opgg.datasource.ward.Ward;
+import kr.co.opgg.datasource.ward.WardRepository;
 import kr.co.opgg.utils.pagination.PageUtil;
 import kr.co.opgg.utils.date.DateUtil;
 import kr.co.opgg.utils.user.UserUtil;
@@ -63,6 +65,9 @@ public class BoardService {
 
     @Autowired
     private RecommendedLogRepository recommendedLogRepository;
+
+    @Autowired
+    private WardRepository wardRepository;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -186,6 +191,30 @@ public class BoardService {
             recommendedLogRepository.save(recommendedLog);
         }else{
             recommendedLogRepository.delete(recommendedLog);
+        }
+
+        return responseService.getSuccessResult();
+    }
+
+    @Transactional
+    public CommonResult boardWard(BoardRequest.Board boardWard) {
+        Integer userIdx = Integer.parseInt(String.valueOf(jwtUtil.getUserIdx()));
+        Integer boardIdx = boardWard.getBoardIdx();
+
+        Ward ward = wardRepository.findByUserIdxAndBoardIdx(userIdx, boardIdx).get();
+
+        if(ward == null){
+            Board board = boardRepository.getReferenceById(boardIdx);
+            User user = userRepository.getReferenceById(userIdx);
+
+            ward = ward.builder()
+                    .board(board)
+                    .user(user)
+                    .build();
+
+            wardRepository.save(ward);
+        }else{
+            wardRepository.delete(ward);
         }
 
         return responseService.getSuccessResult();
