@@ -7,6 +7,7 @@ import kr.co.opgg.apis.common.ResponseService;
 import kr.co.opgg.apis.common.dto.CommonResult;
 import kr.co.opgg.apis.common.dto.PageResult;
 import kr.co.opgg.apis.common.dto.SingleResult;
+import kr.co.opgg.common.jwttoken.JwtUtil;
 import kr.co.opgg.datasource.board.Board;
 import kr.co.opgg.datasource.board.BoardQueryDsl;
 import kr.co.opgg.datasource.board.BoardRepository;
@@ -16,6 +17,8 @@ import kr.co.opgg.datasource.recommended_log.RecommendedLog;
 import kr.co.opgg.datasource.recommended_log.RecommendedLogRepository;
 import kr.co.opgg.datasource.user.User;
 import kr.co.opgg.datasource.user.UserRepository;
+import kr.co.opgg.datasource.ward.Ward;
+import kr.co.opgg.datasource.ward.WardRepository;
 import kr.co.opgg.utils.pagination.PageUtil;
 import kr.co.opgg.utils.date.DateUtil;
 import kr.co.opgg.utils.user.UserUtil;
@@ -63,6 +66,12 @@ public class BoardService {
     @Autowired
     private RecommendedLogRepository recommendedLogRepository;
 
+    @Autowired
+    private WardRepository wardRepository;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
     @Value("board.upload.path")
     private String filePath;
 
@@ -102,8 +111,8 @@ public class BoardService {
 
     @Transactional
     public CommonResult insertBoard(List<MultipartFile> multipartFileList, BoardRequest.BoardDetail boardDetail){
-        //토큰에서 정보 추출해야함
-        User user = userRepository.getReferenceById(1);
+        Integer userIdx = Integer.parseInt(String.valueOf(jwtUtil.getUserIdx()));
+        User user = userRepository.getReferenceById(userIdx);
 
         Board board = Board
                 .builder()
@@ -129,9 +138,7 @@ public class BoardService {
 
         Integer userIdx = Integer.parseInt(String.valueOf(board.getUser().getUserIdx()));
 
-        if(!userUtil.isWriter(userIdx)){
-            throw ABNORMAL_ACCESS_EXCEPTION;
-        }
+        userUtil.isWriter(userIdx);
 
         board.setTitle(boardDetail.getTitle());
         board.setContent(boardDetail.getContent());
@@ -156,9 +163,7 @@ public class BoardService {
 
         Integer userIdx = Integer.parseInt(String.valueOf(board.getUser().getUserIdx()));
 
-        if(!userUtil.isWriter(userIdx)){
-            throw ABNORMAL_ACCESS_EXCEPTION;
-        }
+        userUtil.isWriter(userIdx);
 
         List<File> deleteFileList = board.getFiles();
         List<Integer> deleteFileIdxList = deleteFileList.stream().map(File::getFileIdx).collect(Collectors.toList());
@@ -171,7 +176,7 @@ public class BoardService {
 
     @Transactional
     public CommonResult recommend(BoardRequest.Board board) {
-        Integer userIdx = 0;
+        Integer userIdx = Integer.parseInt(String.valueOf(jwtUtil.getUserIdx()));
         Integer boardIdx = board.getBoardIdx();
 
         RecommendedLog recommendedLog = recommendedLogRepository.findByTargetIdxAndUserIdxAndType(userIdx, boardIdx, type).get();
@@ -186,6 +191,30 @@ public class BoardService {
             recommendedLogRepository.save(recommendedLog);
         }else{
             recommendedLogRepository.delete(recommendedLog);
+        }
+
+        return responseService.getSuccessResult();
+    }
+
+    @Transactional
+    public CommonResult boardWard(BoardRequest.Board boardWard) {
+        Integer userIdx = Integer.parseInt(String.valueOf(jwtUtil.getUserIdx()));
+        Integer boardIdx = boardWard.getBoardIdx();
+
+        Ward ward = wardRepository.findByUserIdxAndBoardIdx(userIdx, boardIdx).get();
+
+        if(ward == null){
+            Board board = boardRepository.getReferenceById(boardIdx);
+            User user = userRepository.getReferenceById(userIdx);
+
+            ward = ward.builder()
+                    .board(board)
+                    .user(user)
+                    .build();
+
+            wardRepository.save(ward);
+        }else{
+            wardRepository.delete(ward);
         }
 
         return responseService.getSuccessResult();

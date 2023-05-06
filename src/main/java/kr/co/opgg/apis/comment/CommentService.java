@@ -1,9 +1,9 @@
 package kr.co.opgg.apis.comment;
 
-import kr.co.opgg.apis.board.dto.BoardRequest;
 import kr.co.opgg.apis.comment.dto.CommentRequest;
 import kr.co.opgg.apis.common.ResponseService;
 import kr.co.opgg.apis.common.dto.CommonResult;
+import kr.co.opgg.common.jwttoken.JwtUtil;
 import kr.co.opgg.datasource.board.Board;
 import kr.co.opgg.datasource.board.BoardRepository;
 import kr.co.opgg.datasource.comment.Comment;
@@ -44,11 +44,14 @@ public class CommentService {
     @Autowired
     private RecommendedLogRepository recommendedLogRepository;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     private final String type = "COMMENT";
 
     @Transactional
     public CommonResult insertComment(CommentRequest.InsertComment insertComment) {
-        Integer userIdx = 0;
+        Integer userIdx = Integer.parseInt(String.valueOf(jwtUtil.getUserIdx()));
         User user = userRepository.getReferenceById(userIdx);
 
         Integer boardIdx = insertComment.getBoardIdx();
@@ -73,9 +76,7 @@ public class CommentService {
 
         Integer userIdx = Integer.parseInt(String.valueOf(comment.getUser().getUserIdx()));
 
-        if(!userUtil.isWriter(userIdx)){
-            throw ABNORMAL_ACCESS_EXCEPTION;
-        }
+        userUtil.isWriter(userIdx);
 
         comment.setCommentContent(updateComment.getCommentContent());
 
@@ -89,9 +90,7 @@ public class CommentService {
 
         Integer userIdx = Integer.parseInt(String.valueOf(comment.getUser().getUserIdx()));
 
-        if(!userUtil.isWriter(userIdx)){
-            throw ABNORMAL_ACCESS_EXCEPTION;
-        }
+        userUtil.isWriter(userIdx);
 
         List<Comment> childCommentList = comment.getChildren();
 
@@ -106,7 +105,7 @@ public class CommentService {
 
     @Transactional
     public CommonResult recommendComment(CommentRequest.RecommendComment recommendComment) {
-        Integer userIdx = 0;
+        Integer userIdx = Integer.parseInt(String.valueOf(jwtUtil.getUserIdx()));
         Integer commentIdx = recommendComment.getCommentIdx();
 
         RecommendedLog recommendedLog = recommendedLogRepository.findByTargetIdxAndUserIdxAndType(userIdx, commentIdx, type).get();

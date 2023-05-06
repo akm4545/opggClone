@@ -24,8 +24,7 @@ public class FAQService {
 
     @Autowired
     private ResponseService responseService;
-    
-    //공통화 부분 빌더 개선점 찾아보기
+
     public ListResult<FAQResponse.FAQ> selectFaqList(FAQRequest.FAQCategory faqCategory){
         String category = faqCategory.getCategory();
 

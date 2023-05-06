@@ -3,6 +3,7 @@ package kr.co.opgg.apis.declaration;
 import kr.co.opgg.apis.common.ResponseService;
 import kr.co.opgg.apis.common.dto.CommonResult;
 import kr.co.opgg.apis.declaration.dto.DeclarationRequest;
+import kr.co.opgg.common.jwttoken.JwtUtil;
 import kr.co.opgg.datasource.declaration.Declaration;
 import kr.co.opgg.datasource.declaration.DeclarationRepository;
 import kr.co.opgg.datasource.user.User;
@@ -24,13 +25,16 @@ public class DeclarationService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     private final String boardType = "BOARD";
 
     private final String commentType = "COMMENT";
 
     @Transactional
     public CommonResult declarationBoard(DeclarationRequest.DeclarationBoard board) {
-        Integer userIdx = 0;
+        Integer userIdx = Integer.parseInt(String.valueOf(jwtUtil.getUserIdx()));
         User user = userRepository.getReferenceById(userIdx);
 
         Declaration declaration = Declaration.builder()
@@ -47,7 +51,7 @@ public class DeclarationService {
     }
 
     public CommonResult declarationComment(DeclarationRequest.DeclarationComment declarationComment) {
-        Integer userIdx = 0;
+        Integer userIdx = Integer.parseInt(String.valueOf(jwtUtil.getUserIdx()));
         User user = userRepository.getReferenceById(userIdx);
 
         Declaration declaration = Declaration.builder()
