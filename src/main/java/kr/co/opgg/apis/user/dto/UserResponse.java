@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 @Getter
 public class UserResponse {
 
-    private Long userIdx;
+    private int userIdx;
 
     private String userId;
 
     private String userPw;
 
     @Builder
-    public UserResponse(Long userIdx, String userId, String userPw){
+    public UserResponse(int userIdx, String userId, String userPw){
         this.userIdx = userIdx;
         this.userId = userId;
         this.userPw = userPw;

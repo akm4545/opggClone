@@ -28,7 +28,7 @@ public class User extends Date {
     @Id
     @GeneratedValue
     @Column(name = "USER_IDX")
-    private Long userIdx;
+    private int userIdx;
 
     @Column(name = "USER_ID")
     private String userId;

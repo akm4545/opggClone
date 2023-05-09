@@ -1,5 +1,7 @@
 package kr.co.opgg.common.jwttoken;
 
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,7 +13,7 @@ import java.util.Collection;
 @Setter
 public class CustomUserDetails implements UserDetails {
 
-    private Long userIdx;
+    private int userIdx;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -47,4 +49,5 @@ public class CustomUserDetails implements UserDetails {
     public boolean isEnabled() {
         return false;
     }
+
 }

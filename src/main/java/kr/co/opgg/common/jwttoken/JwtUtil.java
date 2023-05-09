@@ -51,7 +51,8 @@ public class JwtUtil {
         Long time = type.equals("Access") ? ACCESS_TIME : REFRESH_TIME;
 
         return Jwts.builder()
-                .setSubject(String.valueOf(user.getUserId()))
+                .setSubject(user.getUserId())
+                .claim("userIdx", user.getUserIdx())
                 .claim("roleType", user.getAuthorityIdx())
                 .setExpiration(new Date(date.getTime() + time))
                 .setIssuedAt(date)
@@ -66,7 +67,7 @@ public class JwtUtil {
                 (Collection<? extends GrantedAuthority>) claims.get("roleType");
 
         CustomUserDetails userInfo = new CustomUserDetails();
-        userInfo.setUserIdx(Long.valueOf(claims.getSubject()));
+        userInfo.setUserIdx((Integer) claims.get("userIdx"));
 
         return new UsernamePasswordAuthenticationToken(userInfo, token, authorite);
     }
@@ -90,7 +91,7 @@ public class JwtUtil {
                 .getBody();
     }
 
-    public Long getUserIdx() {
+    public int getUserIdx() {
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return user.getUserIdx();
     }

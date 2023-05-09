@@ -10,6 +10,9 @@ import kr.co.opgg.common.jwttoken.JwtUtil;
 import kr.co.opgg.datasource.user.User;
 import kr.co.opgg.datasource.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -33,6 +36,8 @@ public class UserService{
     private final ResponseService responseService;
 
     private final JwtUtil jwtUtil;
+
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     public SingleResult<UserResponse> insertUser(UserRequest userRequest) {
         UserResponse existUser = userRepository.findByUserId(userRequest.getUserId());
@@ -62,11 +67,12 @@ public class UserService{
         return responseService.getSingleResult(userRepository.findUserIdByPhone(userRequest));
     }
 
-    public User loginUser(UserRequest userRequest) {
-        //todo jwtToken 생성
-        User user = userRepository.loginUser(userRequest);
-
-        return null;
+    public CommonResult loginUser(UserRequest userRequest) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userRequest.getUserId(), userRequest.getUserPw());
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        Optional.ofNullable(authentication).orElseThrow(UserException.UserInfoNotFoundException::new);
+        jwtUtil.createToken(userRequest, "Access");
+        return responseService.getSuccessResult();
     }
 
     public CommonResult updateUser(UserRequest.UserInfo userRequest){

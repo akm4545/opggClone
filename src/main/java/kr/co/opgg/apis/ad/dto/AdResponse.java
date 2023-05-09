@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AdResponse {
 
-    private Long adIdx;
+    private int adIdx;
     private String adTitle;
     private String adLink;
-    private Long userIdx;
+    private int userIdx;
 
     @Builder
-    public AdResponse(Long adIdx, String adTitle, String adLink, Long userIdx){
+    public AdResponse(int adIdx, String adTitle, String adLink, int userIdx){
         this.adIdx = adIdx;
         this.adTitle = adTitle;
         this.adLink = adLink;

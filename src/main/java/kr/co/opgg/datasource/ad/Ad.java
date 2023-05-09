@@ -16,7 +16,7 @@ public class Ad extends Date {
     @Id
     @GeneratedValue
     @Column(name = "AD_IDX")
-    private Long adIdx;
+    private int adIdx;
 
     @Column(name = "AD_TITLE")
     private String adTitle;
@@ -35,7 +35,7 @@ public class Ad extends Date {
     private User user;
 
     @Builder
-    public Ad (Long adIdx, String adTitle, String adLink, User user, String adStartDate, String adEndDate){
+    public Ad (int adIdx, String adTitle, String adLink, User user, String adStartDate, String adEndDate){
         this.adIdx = adIdx;
         this.adTitle = adTitle;
         this.adLink = adLink;

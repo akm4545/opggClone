@@ -18,7 +18,7 @@ public class Authority extends Date {
     @Id
     @GeneratedValue
     @Column(name = "AUTHORITY_IDX")
-    private Long authorityIdx;
+    private int authorityIdx;
 
     private String authorityGrant;
 

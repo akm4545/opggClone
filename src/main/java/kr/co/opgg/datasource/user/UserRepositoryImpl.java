@@ -1,7 +1,6 @@
 package kr.co.opgg.datasource.user;
 
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.co.opgg.apis.user.dto.UserRequest;
 import kr.co.opgg.apis.user.dto.UserResponse;
