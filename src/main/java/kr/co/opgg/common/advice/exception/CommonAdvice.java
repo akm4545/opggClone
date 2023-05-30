@@ -21,7 +21,6 @@ public class CommonAdvice extends ExceptionAdvice {
 
     @ExceptionHandler(CommonException.DoesNotExistException.class)
     public ResponseEntity doesNotExistExceptionHandler(CommonException.DoesNotExistException exception) {
-//        return sendBadRequestWithCodeAndMessage(exception.getErrorCodeAndMessage());
-        return null;
+        return sendBadRequestWithCodeAndMessage(exception.getErrorCodeAndMessage());
     }
 }
