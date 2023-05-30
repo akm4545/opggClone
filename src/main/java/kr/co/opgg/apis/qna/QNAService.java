@@ -80,13 +80,14 @@ public class QNAService {
     }
 
     public ListResult<QNAResponse.SelectQna> selectQNAList() {
-        Integer userIdx = Integer.parseInt(String.valueOf(jwtUtil.getUserIdx()));
-        List<QNA> qnaList = qnaRepository.findByUserIdx(userIdx).orElseThrow(() -> DOES_NOT_EXIST_EXCEPTION);
+//        Integer userIdx = Integer.parseInt(String.valueOf(jwtUtil.getUserIdx()));
+//        List<QNA> qnaList = qnaRepository.findByUserIdx(userIdx).orElseThrow(() -> DOES_NOT_EXIST_EXCEPTION);
 
-        return responseService.getListResult(qnaList.stream()
-                .map(QNAResponse.SelectQna::domainToDto)
-                .collect(Collectors.toList())
-        );
+//        return responseService.getListResult(qnaList.stream()
+//                .map(QNAResponse.SelectQna::domainToDto)
+//                .collect(Collectors.toList())
+//        );
+        return null;
     }
 
     public SingleResult<QNAResponse.SelectQna> selectQNA(QNARequest.QANIdx selectQAN) {

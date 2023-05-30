@@ -24,6 +24,8 @@ public class QQNA extends EntityPathBase<QNA> {
 
     public final kr.co.opgg.datasource.common.QDate _super = new kr.co.opgg.datasource.common.QDate(this);
 
+    public final kr.co.opgg.datasource.answer.QAnswer answer;
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createDate = _super.createDate;
 
@@ -59,6 +61,7 @@ public class QQNA extends EntityPathBase<QNA> {
 
     public QQNA(Class<? extends QNA> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.answer = inits.isInitialized("answer") ? new kr.co.opgg.datasource.answer.QAnswer(forProperty("answer"), inits.get("answer")) : null;
         this.user = inits.isInitialized("user") ? new kr.co.opgg.datasource.user.QUser(forProperty("user"), inits.get("user")) : null;
     }
 

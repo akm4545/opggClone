@@ -26,6 +26,8 @@ public class QComment extends EntityPathBase<Comment> {
 
     public final kr.co.opgg.datasource.board.QBoard board;
 
+    public final ListPath<Comment, QComment> children = this.<Comment, QComment>createList("children", Comment.class, QComment.class, PathInits.DIRECT2);
+
     public final StringPath commentContent = createString("commentContent");
 
     public final NumberPath<Integer> commentIdx = createNumber("commentIdx", Integer.class);

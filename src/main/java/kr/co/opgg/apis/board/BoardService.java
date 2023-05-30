@@ -201,21 +201,21 @@ public class BoardService {
         Integer userIdx = Integer.parseInt(String.valueOf(jwtUtil.getUserIdx()));
         Integer boardIdx = boardWard.getBoardIdx();
 
-        Ward ward = wardRepository.findByUserIdxAndBoardIdx(userIdx, boardIdx).get();
+//        Ward ward = wardRepository.findByUserIdxAndBoardIdx(userIdx, boardIdx).get();
 
-        if(ward == null){
-            Board board = boardRepository.getReferenceById(boardIdx);
-            User user = userRepository.getReferenceById(userIdx);
-
-            ward = ward.builder()
-                    .board(board)
-                    .user(user)
-                    .build();
-
-            wardRepository.save(ward);
-        }else{
-            wardRepository.delete(ward);
-        }
+//        if(ward == null){
+//            Board board = boardRepository.getReferenceById(boardIdx);
+//            User user = userRepository.getReferenceById(userIdx);
+//
+//            ward = ward.builder()
+//                    .board(board)
+//                    .user(user)
+//                    .build();
+//
+//            wardRepository.save(ward);
+//        }else{
+//            wardRepository.delete(ward);
+//        }
 
         return responseService.getSuccessResult();
     }

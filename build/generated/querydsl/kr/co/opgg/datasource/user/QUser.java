@@ -43,7 +43,7 @@ public class QUser extends EntityPathBase<User> {
 
     public final StringPath userId = createString("userId");
 
-    public final NumberPath<Long> userIdx = createNumber("userIdx", Long.class);
+    public final NumberPath<Integer> userIdx = createNumber("userIdx", Integer.class);
 
     public final kr.co.opgg.datasource.user_level.QUserLevel userLevel;
 

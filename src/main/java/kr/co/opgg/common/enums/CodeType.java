@@ -17,4 +17,10 @@ public class CodeType {
     public enum BoardType{
         NOTICE, PLAN, NEWS, TIP, FREE, VIDEO, FIND, ISSUE, ART
     }
+
+
+    //todo 유저 롤타입 정의
+    public enum RoleTypes{
+
+    }
 }

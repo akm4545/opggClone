@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface QNARepository extends JpaRepository<QNA, Integer> {
 
-    Optional<List<QNA>> findByUserIdx(Integer userIdx);
+//    Optional<List<QNA>> findByUserIdx(Integer userIdx);
 }

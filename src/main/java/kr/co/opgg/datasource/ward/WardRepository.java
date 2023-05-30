@@ -6,5 +6,5 @@ import javax.swing.text.html.Option;
 import java.util.Optional;
 
 public interface WardRepository extends JpaRepository<Ward, Integer> {
-    Optional<Ward> findByUserIdxAndBoardIdx(Integer userIdx, Integer boardIdx);
+//    Optional<Ward> findByUserIdxAndBoardIdx(Integer userIdx, Integer boardIdx);
 }

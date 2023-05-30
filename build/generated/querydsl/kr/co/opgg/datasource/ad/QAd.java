@@ -24,9 +24,13 @@ public class QAd extends EntityPathBase<Ad> {
 
     public final kr.co.opgg.datasource.common.QDate _super = new kr.co.opgg.datasource.common.QDate(this);
 
-    public final NumberPath<Long> adIdx = createNumber("adIdx", Long.class);
+    public final StringPath adEndDate = createString("adEndDate");
+
+    public final NumberPath<Integer> adIdx = createNumber("adIdx", Integer.class);
 
     public final StringPath adLink = createString("adLink");
+
+    public final StringPath adStartDate = createString("adStartDate");
 
     public final StringPath adTitle = createString("adTitle");
 

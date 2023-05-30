@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface AdRepository extends JpaRepository<Ad, Integer>, AdRepositoryCustom {
 
-    List<Ad> findByStartDateLessThanEqualAndEndDateGreaterThanEqual(Date date, Date date1);
+    List<Ad> findByAdStartDateLessThanEqualAndAdEndDateGreaterThanEqual(Date date, Date date1);
 }

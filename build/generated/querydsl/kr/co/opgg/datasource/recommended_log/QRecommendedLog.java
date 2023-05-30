@@ -21,8 +21,6 @@ public class QRecommendedLog extends EntityPathBase<RecommendedLog> {
 
     public final kr.co.opgg.datasource.common.QDate _super = new kr.co.opgg.datasource.common.QDate(this);
 
-    public final NumberPath<Integer> boardIdx = createNumber("boardIdx", Integer.class);
-
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createDate = _super.createDate;
 
@@ -30,6 +28,8 @@ public class QRecommendedLog extends EntityPathBase<RecommendedLog> {
     public final DateTimePath<java.time.LocalDateTime> deleteDate = _super.deleteDate;
 
     public final NumberPath<Integer> recommendedLogIdx = createNumber("recommendedLogIdx", Integer.class);
+
+    public final NumberPath<Integer> targetIdx = createNumber("targetIdx", Integer.class);
 
     public final StringPath type = createString("type");
 

@@ -26,7 +26,7 @@ public class QAuthority extends EntityPathBase<Authority> {
 
     public final StringPath authorityGrant = createString("authorityGrant");
 
-    public final NumberPath<Long> authorityIdx = createNumber("authorityIdx", Long.class);
+    public final NumberPath<Integer> authorityIdx = createNumber("authorityIdx", Integer.class);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createDate = _super.createDate;

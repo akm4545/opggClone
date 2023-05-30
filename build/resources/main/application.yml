@@ -8,9 +8,9 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3307/op.gg?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowMultiQueries=true
+    url: jdbc:mysql://101.101.216.55:3306/opgg_clone?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowMultiQueries=true
     username: root
-    password: 1234
+    password: root
 
   jpa:
     hibernate:
@@ -22,6 +22,8 @@ spring:
   sql:
     init:
       mode: always
+  lol:
+    leaderboard: https://kr.api.riotgames.com/lol/league-exp/v4/entries/RANKED_SOLO_5x5
 
 
 

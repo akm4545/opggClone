@@ -31,7 +31,7 @@ public class QNA extends Date {
     private String qnaContent;
 
     @Comment("1:1문의 답변")
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "board")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "qna")
     private Answer answer;
 
     @Comment("유저")

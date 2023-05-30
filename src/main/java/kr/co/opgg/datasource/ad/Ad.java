@@ -24,10 +24,10 @@ public class Ad extends Date {
     @Column(name = "AD_LINK")
     private String adLink;
 
-    @Column(name = "AD_STARTDATE")
+    @Column(name = "AD_START_DATE")
     private String adStartDate;
 
-    @Column(name = "AD_ENDDATE")
+    @Column(name = "AD_END_DATE")
     private String adEndDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
