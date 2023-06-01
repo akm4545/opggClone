@@ -1,9 +1,12 @@
 package kr.co.opgg.apis.leaderBoard;
 
+import kr.co.opgg.apis.common.ResponseService;
+import kr.co.opgg.apis.common.dto.ListResult;
 import kr.co.opgg.apis.leaderBoard.dto.LeaderBoardRequest;
 import kr.co.opgg.apis.leaderBoard.dto.LeaderBoardResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static kr.co.opgg.apis.leaderBoard.dto.LeaderBoardRequest.LeaderBoardTierAndDivisionDto;
 
 @RestController
 @RequestMapping("/leaderBoard")
@@ -21,32 +27,113 @@ public class LeaderBoardController {
     @Autowired
     private LeaderBoardService leaderBoardService;
 
-    @Value("lol.leaderboard")
+    @Autowired
+    private ResponseService responseService;
+
+    @Value("${lol.leaderboard}")
     private String leaderBoardURL;
 
+    private LeaderBoardRequest.LeaderBoardApiRequestDto leaderBoardApiRequestDto = null;
+
     @GetMapping("")
-    //진입 시기는 캐시에 없을테니까 마지막꺼 가져오기
-    public ResponseEntity selectLeaderBoardList(LeaderBoardRequest.SearchLeaderBoardDto searchDto){
+    public ResponseEntity<ListResult> selectLeaderBoardList(LeaderBoardRequest.SearchLeaderBoardDto searchDto){
         WebClient webClient = leaderBoardService.leaderBoardWebClient(leaderBoardURL);
-        Integer page = searchDto.getPage();
+        Integer startPage = searchDto.getPage() - 1;
+        Integer endPage = searchDto.getPage();
 
-        LeaderBoardResponse.SelectLeaderBoardListDto leaderBoardList = leaderBoardService.getApiParams(searchDto);
+        LeaderBoardRequest.LeaderBoardApiRequestDto requestDto = getLastRequestInfo(startPage);
 
-        for(int i=0; i<page; i++){
-            List<LeaderBoardResponse.LeaderBoardItemDto> leaderBoardItemDtoList = (List<LeaderBoardResponse.LeaderBoardItemDto>) webClient.post()//client <- 위에서 만든 객체
-                    .uri("/CHALLENGER/I?page=" + page)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .retrieve()
-                    .bodyToMono(LeaderBoardResponse.LeaderBoardItemDto.class)
-                    .block();
+        if(requestDto != null){
+            Integer lastPage = requestDto.getPage();
+
+            if(startPage > lastPage){
+                startPage = lastPage;
+            }
         }
 
-        //5. 다1 1~10P, 다2 11~15, 다3 16~20 (실제 존재하는 페이지수 - 해당 페이지로 요청 전까지는 파악 불가)
-        //6. 17P 조회시 
-        //7. 1P ~ 17P까지 조회 실행 티어 - 디비전 순으로 조회 ex -> 다1 1P 100 -> 다1 10P 1000 -> 이후 11P 
-        //요청시 null 값이 뜨므로 1P로 돌아가서 다2 1P 조회 반복값은 11이며 요청 Page는 1로 초기화
-        //8. 해당 정보를 캐시에 저장 이후 저장된 데이터에 대해 같은 요청값이 들어오면 캐시 데이터 리턴 
-        //9. 1달 주기로 캐시 초기화
+        List<LeaderBoardResponse.LeaderBoardItemDto> leaderBoardItemDtoList = new ArrayList<LeaderBoardResponse.LeaderBoardItemDto>();
+
+        for(int i=startPage; i<endPage; i++){
+            leaderBoardItemDtoList = requestLeaderBoardApi(i, webClient);
+            //캐시화
+            //해당 메서드 진입하면
+        }
+
+        return ResponseEntity.ok(responseService.getListResult(leaderBoardItemDtoList));
+    }
+
+    @Cacheable("leaderboard")
+    public List<LeaderBoardResponse.LeaderBoardItemDto> requestLeaderBoardApi(Integer page, WebClient webClient){
+        LeaderBoardRequest.LeaderBoardApiRequestDto requestDto = getLastRequestInfo(page - 1);
+
+        String tier = LeaderBoardTierAndDivisionDto.getTierList().get(0);
+        String division = LeaderBoardTierAndDivisionDto.getDivisionList().get(0);
+        Integer requestPage = 1;
+
+        if(requestDto != null){
+            tier = requestDto.getTier();
+            division = requestDto.getDivision();
+            requestPage = requestDto.getRequestPage() + 1;
+        }
+
+        List<LeaderBoardResponse.LeaderBoardItemDto> leaderBoardItemDtoList = (List<LeaderBoardResponse.LeaderBoardItemDto>) webClient.post()//client <- 위에서 만든 객체
+                .uri("/" + tier + "/" + division + "?page=" + requestPage)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(LeaderBoardResponse.LeaderBoardItemDto.class)
+                .block();
+
+        if(leaderBoardItemDtoList == null){
+            tier = getTier(tier, division);
+            division = getDivision(division);
+            requestPage = 1;
+
+            leaderBoardApiRequestDto.setTier(tier);
+            leaderBoardApiRequestDto.setDivision(division);
+            leaderBoardApiRequestDto.setRequestPage(requestPage);
+
+            getLastRequestInfo(page);
+
+            leaderBoardItemDtoList = requestLeaderBoardApi(page, webClient);
+        }else{
+            leaderBoardApiRequestDto.setPage(page);
+            leaderBoardApiRequestDto.setRequestPage(requestPage);
+            leaderBoardApiRequestDto.setTier(tier);
+            leaderBoardApiRequestDto.setDivision(division);
+        }
+
+        getLastRequestInfo(page);
+
+        return leaderBoardItemDtoList;
+    }
+
+    @Cacheable("leaderboard")
+    public LeaderBoardRequest.LeaderBoardApiRequestDto getLastRequestInfo(Integer page){
+        return this.leaderBoardApiRequestDto;
+    }
+
+    private String getTier(String tier, String division){
+        Integer tierIndex = LeaderBoardTierAndDivisionDto.getTierList().indexOf(tier);
+        Integer tierSize = LeaderBoardTierAndDivisionDto.getTierList().size();
+        Integer divisionIndex = LeaderBoardTierAndDivisionDto.getDivisionList().indexOf(division);
+        Integer divisionSize = LeaderBoardTierAndDivisionDto.getDivisionList().size();
+
+        if(divisionIndex == divisionSize - 1){
+            if(tierIndex > tierSize - 1){
+                return LeaderBoardTierAndDivisionDto.getTierList().get(tierIndex + 1);
+            }
+        }
+
+        return null;
+    }
+
+    private String getDivision(String division){
+        Integer index = LeaderBoardTierAndDivisionDto.getDivisionList().indexOf(division);
+        Integer size = LeaderBoardTierAndDivisionDto.getTierList().size();
+
+        if(index > size - 1){
+            return LeaderBoardTierAndDivisionDto.getDivisionList().get(index);
+        }
 
         return null;
     }

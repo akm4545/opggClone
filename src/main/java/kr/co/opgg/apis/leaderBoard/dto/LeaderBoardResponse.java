@@ -19,8 +19,6 @@ public class LeaderBoardResponse {
         private String division;
 
         private Boolean lastYn;
-
-        private List<LeaderBoardItemDto> LeaderBoardItemList;
     }
 
     @Data
