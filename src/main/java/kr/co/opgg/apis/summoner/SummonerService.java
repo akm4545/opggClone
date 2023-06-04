@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,12 +23,12 @@ public class SummonerService {
     public Object selectSummonerMatch(SummonerRequest summonerRequest){
         Map<String, Class> map = Map.of(
                 "SummonerInfo", SummonerResponse.SummonerInfo.class,
-                "MatchList", SummonerResponse.MatchList.class,
                 "MatchInfo", SummonerResponse.MatchInfo.class,
-                "MatchParticipant", SummonerResponse.MatchParticipant.class,
-                "Match", SummonerResponse.Match.class
+                "Match", SummonerResponse.Match.class,
+                "MatchIdList", String[].class
         );
 
+        System.out.println("getURL = " + summonerRequest.getRequestURL());
         return summonerWebClient(summonerRequest).get()
                 .uri(summonerRequest.getRequestURL())
                 .accept(MediaType.APPLICATION_JSON)

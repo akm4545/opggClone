@@ -30,20 +30,29 @@ public class SummonerResponse {
 
     @Getter
     @ToString
-    public static class MatchList{
-        private List<Match> matches;
-    }
-
-    @Getter
-    @ToString
     public static class MatchInfo{
+        @Getter
         private List<MatchParticipant> matchParticipants;
     }
 
     @Getter
     @ToString
     public static class Match{
-        private String match;
+        private MetaData metadata;
+        private Info info;
+    }
+
+    @Getter
+    @ToString
+    public static class MetaData{
+        private String dataVersion;
+        private String matchId;
+    }
+
+    @Getter
+    @ToString
+    public static class Info{
+        private List<MatchParticipant> participants;
     }
 
     @Getter
