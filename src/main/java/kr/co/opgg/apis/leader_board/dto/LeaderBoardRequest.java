@@ -1,9 +1,7 @@
-package kr.co.opgg.apis.leaderBoard.dto;
+package kr.co.opgg.apis.leader_board.dto;
 
 import lombok.Data;
-import org.springframework.context.annotation.Bean;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class LeaderBoardRequest {
