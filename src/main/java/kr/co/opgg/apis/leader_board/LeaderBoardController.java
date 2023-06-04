@@ -1,9 +1,9 @@
-package kr.co.opgg.apis.leaderBoard;
+package kr.co.opgg.apis.leader_board;
 
 import kr.co.opgg.apis.common.ResponseService;
 import kr.co.opgg.apis.common.dto.ListResult;
-import kr.co.opgg.apis.leaderBoard.dto.LeaderBoardRequest;
-import kr.co.opgg.apis.leaderBoard.dto.LeaderBoardResponse;
+import kr.co.opgg.apis.leader_board.dto.LeaderBoardRequest;
+import kr.co.opgg.apis.leader_board.dto.LeaderBoardResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -12,13 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static kr.co.opgg.apis.leaderBoard.dto.LeaderBoardRequest.LeaderBoardTierAndDivisionDto;
+import static kr.co.opgg.apis.leader_board.dto.LeaderBoardRequest.LeaderBoardTierAndDivisionDto;
 
 @RestController
 @RequestMapping("/leaderBoard")
@@ -36,7 +35,7 @@ public class LeaderBoardController {
     private LeaderBoardRequest.LeaderBoardApiRequestDto leaderBoardApiRequestDto = null;
 
     @GetMapping("")
-    public ResponseEntity<ListResult> selectLeaderBoardList(LeaderBoardRequest.SearchLeaderBoardDto searchDto){
+    public ResponseEntity<ListResult<LeaderBoardResponse.LeaderBoardItemDto>> selectLeaderBoardList(LeaderBoardRequest.SearchLeaderBoardDto searchDto){
         WebClient webClient = leaderBoardService.leaderBoardWebClient(leaderBoardURL);
         Integer startPage = searchDto.getPage() - 1;
         Integer endPage = searchDto.getPage();
