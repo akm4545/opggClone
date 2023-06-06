@@ -54,8 +54,6 @@ public class LeaderBoardController {
 
         for(int i=startPage; i<endPage; i++){
             leaderBoardItemDtoList = requestLeaderBoardApi(i, webClient);
-            //캐시화
-            //해당 메서드 진입하면
         }
 
         return ResponseEntity.ok(responseService.getListResult(leaderBoardItemDtoList));
