@@ -7,6 +7,7 @@ import kr.co.opgg.apis.leader_board.dto.LeaderBoardResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +33,9 @@ public class LeaderBoardController {
     @Value("${lol.leaderboard}")
     private String leaderBoardURL;
 
+    @Value("${lol.api_key}")
+    private String apiKey;
+
     private LeaderBoardRequest.LeaderBoardApiRequestDto leaderBoardApiRequestDto = null;
 
     @GetMapping("")
@@ -40,10 +44,8 @@ public class LeaderBoardController {
         Integer startPage = searchDto.getPage() - 1;
         Integer endPage = searchDto.getPage();
 
-        LeaderBoardRequest.LeaderBoardApiRequestDto requestDto = getLastRequestInfo(startPage);
-
-        if(requestDto != null){
-            Integer lastPage = requestDto.getPage();
+        if(leaderBoardApiRequestDto != null){
+            Integer lastPage = leaderBoardApiRequestDto.getPage();
 
             if(startPage > lastPage){
                 startPage = lastPage;
@@ -61,24 +63,26 @@ public class LeaderBoardController {
 
     @Cacheable("leaderboard")
     public List<LeaderBoardResponse.LeaderBoardItemDto> requestLeaderBoardApi(Integer page, WebClient webClient){
-        LeaderBoardRequest.LeaderBoardApiRequestDto requestDto = getLastRequestInfo(page - 1);
-
         String tier = LeaderBoardTierAndDivisionDto.getTierList().get(0);
         String division = LeaderBoardTierAndDivisionDto.getDivisionList().get(0);
         Integer requestPage = 1;
 
-        if(requestDto != null){
-            tier = requestDto.getTier();
-            division = requestDto.getDivision();
-            requestPage = requestDto.getRequestPage() + 1;
+        if(leaderBoardApiRequestDto != null){
+            tier = leaderBoardApiRequestDto.getTier();
+            division = leaderBoardApiRequestDto.getDivision();
+            requestPage = leaderBoardApiRequestDto.getRequestPage() + 1;
+        }else{
+            leaderBoardApiRequestDto = new LeaderBoardRequest.LeaderBoardApiRequestDto();
         }
 
-        List<LeaderBoardResponse.LeaderBoardItemDto> leaderBoardItemDtoList = (List<LeaderBoardResponse.LeaderBoardItemDto>) webClient.post()//client <- 위에서 만든 객체
-                .uri("/" + tier + "/" + division + "?page=" + requestPage)
+        List<LeaderBoardResponse.LeaderBoardItemDto> leaderBoardItemDtoList = (List<LeaderBoardResponse.LeaderBoardItemDto>) webClient.get()//client <- 위에서 만든 객체
+                .uri("/" + tier + "/" + division + "?page=" + requestPage + "&api_key=" + apiKey)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToMono(LeaderBoardResponse.LeaderBoardItemDto.class)
+                .bodyToMono(new ParameterizedTypeReference<List<LeaderBoardResponse.LeaderBoardItemDto>>() {})
                 .block();
+
+        System.out.println(leaderBoardItemDtoList);
 
         if(leaderBoardItemDtoList == null){
             tier = getTier(tier, division);
@@ -89,8 +93,6 @@ public class LeaderBoardController {
             leaderBoardApiRequestDto.setDivision(division);
             leaderBoardApiRequestDto.setRequestPage(requestPage);
 
-            getLastRequestInfo(page);
-
             leaderBoardItemDtoList = requestLeaderBoardApi(page, webClient);
         }else{
             leaderBoardApiRequestDto.setPage(page);
@@ -99,14 +101,7 @@ public class LeaderBoardController {
             leaderBoardApiRequestDto.setDivision(division);
         }
 
-        getLastRequestInfo(page);
-
         return leaderBoardItemDtoList;
-    }
-
-    @Cacheable("leaderboard")
-    public LeaderBoardRequest.LeaderBoardApiRequestDto getLastRequestInfo(Integer page){
-        return this.leaderBoardApiRequestDto;
     }
 
     private String getTier(String tier, String division){
