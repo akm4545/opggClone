@@ -2,11 +2,11 @@ package kr.co.opgg.apis.summoner;
 
 import kr.co.opgg.apis.common.ResponseService;
 import kr.co.opgg.apis.common.dto.ListResult;
-import kr.co.opgg.apis.common.dto.SingleResult;
 import kr.co.opgg.apis.summoner.dto.SummonerRequest;
-import kr.co.opgg.apis.summoner.dto.SummonerResponse;
+import kr.co.opgg.common.exception.SearchException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static kr.co.opgg.apis.summoner.dto.SummonerResponse.*;
@@ -41,9 +42,6 @@ public class SummonerController {
 
     private final ResponseService responseService;
 
-
-
-
     @GetMapping("/{summoner}")
     public ResponseEntity<ListResult<Match>> selectSummoner (SummonerRequest summonerRequest) {
         summonerRequest = setReqParam(summonerURL, summonerRequest.getSummoner() + "?" + apiKey, "SummonerInfo");
@@ -51,16 +49,19 @@ public class SummonerController {
         List<Match> matchParticipants = new ArrayList<>();
 
         //todo 페이징 처리, 예외처리
-        if(summonerResponse.getPuuid() != null){
-            summonerRequest = setReqParam(matches, summonerResponse.getPuuid() + "/ids" + "?start="+ 0+ "&count="+ 20 + "&" + apiKey, "MatchIdList");
-            String[] matches = (String[]) summonerService.selectSummonerMatch(summonerRequest);
+        Optional.ofNullable(summonerResponse).orElseThrow(SearchException.NotFoundSummonerException::new);
+        summonerRequest =
+                setReqParam(matches,
+                        summonerResponse.getPuuid() + "/ids" + "?start="+ summonerRequest.getStartPage() + "&count="+ summonerRequest.getCount() + "&" + apiKey, "MatchIdList");
+        String[] matches = (String[]) summonerService.selectSummonerMatch(summonerRequest);
 
-            matchParticipants = Arrays.asList(matches).stream()
-                    .map(matchData -> setReqParam(match, matchData+ "?" +apiKey, "Match"))
-                    .map(summonerService::selectSummonerMatch)
-                    .map(matchParticipant -> (Match) matchParticipant)
-                    .collect(Collectors.toList());
-        }
+        Optional.ofNullable(matches).orElseThrow(SearchException.SearchInfoNotFoundException::new);
+        matchParticipants = Arrays.asList(matches).stream()
+                .map(matchData -> setReqParam(match, matchData+ "?" +apiKey, "Match"))
+                .map(summonerService::selectSummonerMatch)
+                .map(matchParticipant -> (Match) matchParticipant)
+                .collect(Collectors.toList());
+
         return ResponseEntity.ok(responseService.getListResult(matchParticipants));
     }
 

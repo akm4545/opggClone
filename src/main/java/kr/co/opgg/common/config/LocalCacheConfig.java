@@ -1,5 +1,6 @@
 package kr.co.opgg.common.config;
 
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
@@ -17,6 +18,7 @@ public class LocalCacheConfig {
     public CacheManager cacheManager(){
         SimpleCacheManager simpleCacheManager = new SimpleCacheManager();
         simpleCacheManager.setCaches(List.of(new ConcurrentMapCache("leaderboard")));
+        simpleCacheManager.setCaches(List.of(new ConcurrentMapCache("summoner")));
 
         return simpleCacheManager;
     }

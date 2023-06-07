@@ -28,7 +28,6 @@ public class SummonerService {
                 "MatchIdList", String[].class
         );
 
-        System.out.println("getURL = " + summonerRequest.getRequestURL());
         return summonerWebClient(summonerRequest).get()
                 .uri(summonerRequest.getRequestURL())
                 .accept(MediaType.APPLICATION_JSON)
@@ -36,5 +35,4 @@ public class SummonerService {
                 .bodyToMono(map.get(summonerRequest.getReqType()))
                 .block();
     }
-
 }

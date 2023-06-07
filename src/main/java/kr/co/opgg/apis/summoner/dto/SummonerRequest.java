@@ -13,5 +13,9 @@ public class SummonerRequest{
 
     private String requestURL;
 
-    public String reqType;
+    private String reqType;
+
+    private int startPage;
+
+    private int count = 20;
 }
