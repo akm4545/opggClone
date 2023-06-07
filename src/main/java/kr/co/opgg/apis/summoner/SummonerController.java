@@ -26,7 +26,7 @@ import static kr.co.opgg.apis.summoner.dto.SummonerResponse.*;
 @RequiredArgsConstructor
 public class SummonerController {
 
-    @Value("${lol.summoner}")
+    /*@Value("${lol.summoner}")
     private String summonerURL;
 
     @Value("${lol.apiKey}")
@@ -72,5 +72,5 @@ public class SummonerController {
         summonerRequest.setReqType(reqType);
 
         return summonerRequest;
-    }
+    }*/
 }

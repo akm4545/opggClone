@@ -1,6 +1,7 @@
 package kr.co.opgg.apis.leader_board.dto;
 
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class LeaderBoardRequest {
     }
 
     @Data
+    @ToString
     public static class LeaderBoardApiRequestDto{
         private Integer page;
 

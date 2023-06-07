@@ -7,6 +7,7 @@ import kr.co.opgg.apis.leader_board.dto.LeaderBoardResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,18 +33,31 @@ public class LeaderBoardController {
     @Value("${lol.leaderboard}")
     private String leaderBoardURL;
 
+    @Value("${lol.api_key}")
+    private String apiKey;
+
     private LeaderBoardRequest.LeaderBoardApiRequestDto leaderBoardApiRequestDto = null;
 
+    private List<LeaderBoardResponse.LeaderBoardPageDto> leaderBoardPageList = new ArrayList<LeaderBoardResponse.LeaderBoardPageDto>();
+
+    //캐시 제거
+    //전역변수로 요청한 페이지까지 페이징해서 데이터 저장
+    //page 체크 로직은 아래꺼 사용하면 될듯
+    //요청시 해당 페이지가 객체에 존재하면 api 호출하지 말고 리턴
+    //없으면 api 요청
     @GetMapping("")
     public ResponseEntity<ListResult<LeaderBoardResponse.LeaderBoardItemDto>> selectLeaderBoardList(LeaderBoardRequest.SearchLeaderBoardDto searchDto){
-        WebClient webClient = leaderBoardService.leaderBoardWebClient(leaderBoardURL);
-        Integer startPage = searchDto.getPage() - 1;
-        Integer endPage = searchDto.getPage();
+        Integer startPage = searchDto.getPage();
+        Integer endPage = searchDto.getPage() + 1;
 
-        LeaderBoardRequest.LeaderBoardApiRequestDto requestDto = getLastRequestInfo(startPage);
+        if(leaderBoardPageList.size() >= startPage){
+            List<LeaderBoardResponse.LeaderBoardItemDto> savedLeaderBoardList = leaderBoardPageList.get(startPage - 1).getLeaderBoardList();
 
-        if(requestDto != null){
-            Integer lastPage = requestDto.getPage();
+            return ResponseEntity.ok(responseService.getListResult(savedLeaderBoardList));
+        }
+
+        if(leaderBoardApiRequestDto != null){
+            Integer lastPage = leaderBoardApiRequestDto.getPage();
 
             if(startPage > lastPage){
                 startPage = lastPage;
@@ -53,34 +67,44 @@ public class LeaderBoardController {
         List<LeaderBoardResponse.LeaderBoardItemDto> leaderBoardItemDtoList = new ArrayList<LeaderBoardResponse.LeaderBoardItemDto>();
 
         for(int i=startPage; i<endPage; i++){
-            leaderBoardItemDtoList = requestLeaderBoardApi(i, webClient);
-            //캐시화
-            //해당 메서드 진입하면
+            leaderBoardItemDtoList = requestLeaderBoardApi(i);
         }
+
+        //리턴시 저장소에서 해당 page를 꺼내서 줌
 
         return ResponseEntity.ok(responseService.getListResult(leaderBoardItemDtoList));
     }
 
-    @Cacheable("leaderboard")
-    public List<LeaderBoardResponse.LeaderBoardItemDto> requestLeaderBoardApi(Integer page, WebClient webClient){
-        LeaderBoardRequest.LeaderBoardApiRequestDto requestDto = getLastRequestInfo(page - 1);
+//    @Cacheable("leaderboard")
+//return 값 100개씩 나눠서 저장
+    public List<LeaderBoardResponse.LeaderBoardItemDto> requestLeaderBoardApi(Integer page){
+        WebClient webClient = leaderBoardService.leaderBoardWebClient(leaderBoardURL);
 
         String tier = LeaderBoardTierAndDivisionDto.getTierList().get(0);
         String division = LeaderBoardTierAndDivisionDto.getDivisionList().get(0);
         Integer requestPage = 1;
 
-        if(requestDto != null){
-            tier = requestDto.getTier();
-            division = requestDto.getDivision();
-            requestPage = requestDto.getRequestPage() + 1;
+        if(leaderBoardApiRequestDto != null){
+            tier = leaderBoardApiRequestDto.getTier();
+            division = leaderBoardApiRequestDto.getDivision();
+            requestPage = leaderBoardApiRequestDto.getRequestPage() + 1;
+        }else{
+            leaderBoardApiRequestDto = new LeaderBoardRequest.LeaderBoardApiRequestDto();
         }
 
-        List<LeaderBoardResponse.LeaderBoardItemDto> leaderBoardItemDtoList = (List<LeaderBoardResponse.LeaderBoardItemDto>) webClient.post()//client <- 위에서 만든 객체
-                .uri("/" + tier + "/" + division + "?page=" + requestPage)
+        System.out.println(leaderBoardApiRequestDto);
+
+        List<LeaderBoardResponse.LeaderBoardItemDto> leaderBoardItemDtoList = (List<LeaderBoardResponse.LeaderBoardItemDto>) webClient.get()//client <- 위에서 만든 객체
+                .uri("/" + tier + "/" + division + "?page=" + requestPage + "&api_key=" + apiKey)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToMono(LeaderBoardResponse.LeaderBoardItemDto.class)
+                .bodyToMono(new ParameterizedTypeReference<List<LeaderBoardResponse.LeaderBoardItemDto>>() {})
                 .block();
+        
+        //해당 부분에서 저장 후 
+        //원하는 페이지가 안나올시 아래 if문 실행
+
+        System.out.println(leaderBoardItemDtoList);
 
         if(leaderBoardItemDtoList == null){
             tier = getTier(tier, division);
@@ -91,9 +115,7 @@ public class LeaderBoardController {
             leaderBoardApiRequestDto.setDivision(division);
             leaderBoardApiRequestDto.setRequestPage(requestPage);
 
-            getLastRequestInfo(page);
-
-            leaderBoardItemDtoList = requestLeaderBoardApi(page, webClient);
+            leaderBoardItemDtoList = requestLeaderBoardApi(page);
         }else{
             leaderBoardApiRequestDto.setPage(page);
             leaderBoardApiRequestDto.setRequestPage(requestPage);
@@ -101,14 +123,7 @@ public class LeaderBoardController {
             leaderBoardApiRequestDto.setDivision(division);
         }
 
-        getLastRequestInfo(page);
-
         return leaderBoardItemDtoList;
-    }
-
-    @Cacheable("leaderboard")
-    public LeaderBoardRequest.LeaderBoardApiRequestDto getLastRequestInfo(Integer page){
-        return this.leaderBoardApiRequestDto;
     }
 
     private String getTier(String tier, String division){
@@ -135,5 +150,59 @@ public class LeaderBoardController {
         }
 
         return null;
+    }
+
+    //return 값 100개씩 나눠서 저장하는 메서드
+    private void setLeaderBoardPage(List<LeaderBoardResponse.LeaderBoardItemDto> leaderBoardItemList){
+        Integer lastLeaderBoardDtoPage = 0;
+        Integer leaderBoardItemCount = leaderBoardItemList.size();
+
+        if(!leaderBoardPageList.isEmpty()){
+            Integer lastIndex = leaderBoardPageList.size() - 1;
+            lastLeaderBoardDtoPage = leaderBoardPageList.size();
+            List<LeaderBoardResponse.LeaderBoardItemDto> lastLeaderBoardItemList = leaderBoardPageList.get(lastIndex).getLeaderBoardList();
+
+            if(isCompletePage(lastLeaderBoardItemList)){
+                List<LeaderBoardResponse.LeaderBoardItemDto> mergeLeaderBoardItemList = getMergeLeaderboardItemList(lastLeaderBoardItemList, leaderBoardItemList);
+                lastLeaderBoardItemList.addAll(mergeLeaderBoardItemList);
+
+                leaderBoardItemCount = leaderBoardItemCount - mergeLeaderBoardItemList.size();
+            }
+        }
+
+        Integer remainCount = 100 % leaderBoardItemCount;
+
+        if(isMergeable(remainCount)){
+
+        }
+    }
+
+    private Boolean isCompletePage(List<LeaderBoardResponse.LeaderBoardItemDto> lastLeaderBoardPageDto){
+        Integer lastLeaderBoardItemCount = lastLeaderBoardPageDto.size();
+
+        if(lastLeaderBoardItemCount > 100){
+            return false;
+        }
+
+        return true;
+    }
+
+    private Boolean isMergeable(Integer remainCount){
+        if(remainCount <= 0){
+            return true;
+        }
+
+        return false;
+    }
+
+    private List<LeaderBoardResponse.LeaderBoardItemDto> getMergeLeaderboardItemList(List<LeaderBoardResponse.LeaderBoardItemDto> lastLeaderBoardPageDto, List<LeaderBoardResponse.LeaderBoardItemDto> leaderBoardItemList){
+        Integer mergeSize = 100 - lastLeaderBoardPageDto.size();
+        Integer leaderBoardSize = leaderBoardItemList.size();
+
+        if(mergeSize > leaderBoardSize){
+            return leaderBoardItemList;
+        }
+
+        return leaderBoardItemList.subList(0, mergeSize);
     }
 }
