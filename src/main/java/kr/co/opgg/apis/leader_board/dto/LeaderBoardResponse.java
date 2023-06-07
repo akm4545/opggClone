@@ -1,7 +1,10 @@
 package kr.co.opgg.apis.leader_board.dto;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
+
+import java.util.List;
 
 public class LeaderBoardResponse {
 
@@ -18,5 +21,13 @@ public class LeaderBoardResponse {
         private Integer wins;
 
         private Integer losses;
+    }
+
+    @Data
+    @Builder
+    public static class LeaderBoardPageDto{
+        private Integer page;
+
+        private List<LeaderBoardItemDto> leaderBoardList;
     }
 }
