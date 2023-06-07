@@ -18,7 +18,7 @@ public class LocalCacheConfig {
     public CacheManager cacheManager(){
         SimpleCacheManager simpleCacheManager = new SimpleCacheManager();
         simpleCacheManager.setCaches(List.of(new ConcurrentMapCache("leaderboard")));
-        simpleCacheManager.setCaches(List.of(new ConcurrentMapCache("summoner")));
+        simpleCacheManager.setCaches(List.of(new ConcurrentMapCache("matchParticipants")));
 
         return simpleCacheManager;
     }

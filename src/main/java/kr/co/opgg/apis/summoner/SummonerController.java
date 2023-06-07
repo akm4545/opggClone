@@ -26,10 +26,10 @@ import static kr.co.opgg.apis.summoner.dto.SummonerResponse.*;
 @RequiredArgsConstructor
 public class SummonerController {
 
-    /*@Value("${lol.summoner}")
+    @Value("${lol.summoner}")
     private String summonerURL;
 
-    @Value("${lol.apiKey}")
+    @Value("${lol.api_key}")
     private String apiKey;
 
     @Value("${lol.matches}")
@@ -42,6 +42,7 @@ public class SummonerController {
 
     private final ResponseService responseService;
 
+    @Cacheable(value = "matchParticipants", key = "#summonerRequest.summoner")
     @GetMapping("/{summoner}")
     public ResponseEntity<ListResult<Match>> selectSummoner (SummonerRequest summonerRequest) {
         summonerRequest = setReqParam(summonerURL, summonerRequest.getSummoner() + "?" + apiKey, "SummonerInfo");
@@ -72,5 +73,5 @@ public class SummonerController {
         summonerRequest.setReqType(reqType);
 
         return summonerRequest;
-    }*/
+    }
 }
