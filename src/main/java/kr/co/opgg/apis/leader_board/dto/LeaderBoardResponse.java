@@ -25,6 +25,7 @@ public class LeaderBoardResponse {
 
     @Data
     @Builder
+    @ToString
     public static class LeaderBoardPageDto{
         private Integer page;
 

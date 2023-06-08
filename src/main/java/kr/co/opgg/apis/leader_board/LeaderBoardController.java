@@ -40,18 +40,13 @@ public class LeaderBoardController {
 
     private List<LeaderBoardResponse.LeaderBoardPageDto> leaderBoardPageList = new ArrayList<LeaderBoardResponse.LeaderBoardPageDto>();
 
-    //캐시 제거
-    //전역변수로 요청한 페이지까지 페이징해서 데이터 저장
-    //page 체크 로직은 아래꺼 사용하면 될듯
-    //요청시 해당 페이지가 객체에 존재하면 api 호출하지 말고 리턴
-    //없으면 api 요청
     @GetMapping("")
     public ResponseEntity<ListResult<LeaderBoardResponse.LeaderBoardItemDto>> selectLeaderBoardList(LeaderBoardRequest.SearchLeaderBoardDto searchDto){
         Integer startPage = searchDto.getPage();
         Integer endPage = searchDto.getPage() + 1;
         List<LeaderBoardResponse.LeaderBoardItemDto> savedLeaderBoardList = new ArrayList<LeaderBoardResponse.LeaderBoardItemDto>();
 
-        if(leaderBoardPageList.size() >= startPage){
+        if(leaderBoardPageList.size() >= startPage && leaderBoardPageList.get(startPage - 1).getLeaderBoardList().size() == 100){
             savedLeaderBoardList = leaderBoardPageList.get(startPage - 1).getLeaderBoardList();
             return ResponseEntity.ok(responseService.getListResult(savedLeaderBoardList));
         }
@@ -64,15 +59,16 @@ public class LeaderBoardController {
             }
         }
 
-        List<LeaderBoardResponse.LeaderBoardItemDto> leaderBoardItemDtoList = new ArrayList<LeaderBoardResponse.LeaderBoardItemDto>();
-
         for(int i=startPage; i<endPage; i++){
-            leaderBoardItemDtoList = requestLeaderBoardApi(i);
+            requestLeaderBoardApi(i);
         }
 
-        //리턴시 저장소에서 해당 page를 꺼내서 줌
-
         savedLeaderBoardList = leaderBoardPageList.get(startPage - 1).getLeaderBoardList();
+
+        if(savedLeaderBoardList.size() != 100){
+            requestLeaderBoardApi(endPage);
+        }
+
         return ResponseEntity.ok(responseService.getListResult(savedLeaderBoardList));
     }
 
@@ -166,7 +162,9 @@ public class LeaderBoardController {
                 leaderBoardPageList.get(lastIndex).setLeaderBoardList(lastLeaderBoardItemList);
             }
         }else{
-            leaderBoardPageList.add(LeaderBoardResponse.LeaderBoardPageDto.builder().build());
+            leaderBoardPageList.add(LeaderBoardResponse.LeaderBoardPageDto.builder()
+                    .leaderBoardList(new ArrayList<>())
+                    .build());
         }
 
         Integer mergingPageSize = leaderBoardItemCount / 100;
@@ -177,6 +175,11 @@ public class LeaderBoardController {
             lastLeaderBoardDtoPage = leaderBoardPageList.size();
             List<LeaderBoardResponse.LeaderBoardItemDto> lastLeaderBoardItemList = leaderBoardPageList.get(lastIndex).getLeaderBoardList();
             List<LeaderBoardResponse.LeaderBoardItemDto> mergeLeaderBoardItemList = getMergeLeaderboardItemList(lastLeaderBoardItemList, leaderBoardItemList);
+
+
+            if(i == mergingPageSize - 1){
+                mergeLeaderBoardItemList = leaderBoardItemList;
+            }
 
             if(!isCompletePage(lastLeaderBoardItemList)){
                 lastLeaderBoardItemList.addAll(mergeLeaderBoardItemList);
@@ -210,13 +213,20 @@ public class LeaderBoardController {
 
     private List<LeaderBoardResponse.LeaderBoardItemDto> getMergeLeaderboardItemList(List<LeaderBoardResponse.LeaderBoardItemDto> lastLeaderBoardPageDto, List<LeaderBoardResponse.LeaderBoardItemDto> leaderBoardItemList){
         Integer mergeSize = 100 - lastLeaderBoardPageDto.size();
+
+        if(mergeSize == 0){
+            mergeSize = 100;
+        }
+
         Integer leaderBoardSize = leaderBoardItemList.size();
 
         if(mergeSize > leaderBoardSize){
             return leaderBoardItemList;
         }
 
-        List<LeaderBoardResponse.LeaderBoardItemDto> mergeList = leaderBoardItemList.subList(0, mergeSize);
+        List<LeaderBoardResponse.LeaderBoardItemDto> mergeList = new ArrayList<LeaderBoardResponse.LeaderBoardItemDto>();
+        mergeList.addAll(leaderBoardItemList.subList(0, mergeSize));
+
         leaderBoardItemList.removeAll(mergeList);
 
         return mergeList;
