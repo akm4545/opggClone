@@ -2,6 +2,7 @@ package kr.co.opgg.apis.leader_board;
 
 import kr.co.opgg.apis.common.ResponseService;
 import kr.co.opgg.apis.common.dto.ListResult;
+import kr.co.opgg.apis.common.dto.SingleResult;
 import kr.co.opgg.apis.leader_board.dto.LeaderBoardRequest;
 import kr.co.opgg.apis.leader_board.dto.LeaderBoardResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,14 +42,13 @@ public class LeaderBoardController {
     private List<LeaderBoardResponse.LeaderBoardPageDto> leaderBoardPageList = new ArrayList<LeaderBoardResponse.LeaderBoardPageDto>();
 
     @GetMapping("")
-    public ResponseEntity<ListResult<LeaderBoardResponse.LeaderBoardItemDto>> selectLeaderBoardList(LeaderBoardRequest.SearchLeaderBoardDto searchDto){
+    public ResponseEntity<SingleResult<LeaderBoardResponse.LeaderBoardPageDto>> selectLeaderBoardList(LeaderBoardRequest.SearchLeaderBoardDto searchDto){
         Integer startPage = searchDto.getPage();
         Integer endPage = searchDto.getPage() + 1;
         List<LeaderBoardResponse.LeaderBoardItemDto> savedLeaderBoardList = new ArrayList<LeaderBoardResponse.LeaderBoardItemDto>();
 
         if(leaderBoardPageList.size() >= startPage && leaderBoardPageList.get(startPage - 1).getLeaderBoardList().size() == 100){
-            savedLeaderBoardList = leaderBoardPageList.get(startPage - 1).getLeaderBoardList();
-            return ResponseEntity.ok(responseService.getListResult(savedLeaderBoardList));
+            return ResponseEntity.ok(responseService.getSingleResult(leaderBoardPageList.get(startPage - 1)));
         }
 
         if(leaderBoardApiRequestDto != null){
@@ -69,11 +69,9 @@ public class LeaderBoardController {
             requestLeaderBoardApi(endPage);
         }
 
-        return ResponseEntity.ok(responseService.getListResult(savedLeaderBoardList));
+        return ResponseEntity.ok(responseService.getSingleResult(leaderBoardPageList.get(startPage - 1)));
     }
 
-//    @Cacheable("leaderboard")
-//return 값 100개씩 나눠서 저장
     public List<LeaderBoardResponse.LeaderBoardItemDto> requestLeaderBoardApi(Integer page){
         WebClient webClient = leaderBoardService.leaderBoardWebClient(leaderBoardURL);
 
@@ -176,7 +174,6 @@ public class LeaderBoardController {
             List<LeaderBoardResponse.LeaderBoardItemDto> lastLeaderBoardItemList = leaderBoardPageList.get(lastIndex).getLeaderBoardList();
             List<LeaderBoardResponse.LeaderBoardItemDto> mergeLeaderBoardItemList = getMergeLeaderboardItemList(lastLeaderBoardItemList, leaderBoardItemList);
 
-
             if(i == mergingPageSize - 1){
                 mergeLeaderBoardItemList = leaderBoardItemList;
             }
@@ -203,14 +200,6 @@ public class LeaderBoardController {
         return false;
     }
 
-    private Boolean isMergeable(Integer remainCount){
-        if(remainCount <= 0){
-            return true;
-        }
-
-        return false;
-    }
-
     private List<LeaderBoardResponse.LeaderBoardItemDto> getMergeLeaderboardItemList(List<LeaderBoardResponse.LeaderBoardItemDto> lastLeaderBoardPageDto, List<LeaderBoardResponse.LeaderBoardItemDto> leaderBoardItemList){
         Integer mergeSize = 100 - lastLeaderBoardPageDto.size();
 
@@ -230,5 +219,30 @@ public class LeaderBoardController {
         leaderBoardItemList.removeAll(mergeList);
 
         return mergeList;
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<SingleResult<LeaderBoardResponse.LeaderBoardPageDto>> userNameSearch(String userName){
+        Boolean findSw = false;
+
+        for(int i=0; i<leaderBoardPageList.size(); i++){
+            List<LeaderBoardResponse.LeaderBoardItemDto> leaderBoardItemList = leaderBoardPageList.get(i).getLeaderBoardList();
+
+            for(int j=0; j<leaderBoardItemList.size(); j++){
+                String searchTargetName = leaderBoardItemList.get(j).getSummonerName();
+
+                if(userName.equals(searchTargetName)){
+                    findSw = true;
+
+                    break;
+                }
+            }
+
+            if(findSw){
+                return ResponseEntity.ok(responseService.getSingleResult(leaderBoardPageList.get(i)));
+            }
+        }
+
+        return ResponseEntity.ok(responseService.getSingleResult(null));
     }
 }
