@@ -3,13 +3,16 @@ package kr.co.opgg.apis.statistics.dto;
 import kr.co.opgg.apis.leader_board.dto.LeaderBoardRequest;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @ToString
+@Setter
 @NoArgsConstructor
 public class StatisticsRequest {
         //챔피언별 통계 or 티어별 통계 c or t
@@ -31,4 +34,12 @@ public class StatisticsRequest {
         private String gameTime;
 
         private String position;
+
+        public static class GameTypeDto {
+                private static List<String> gameType = List.of("RANKED_SOLO_5x5", "RANKED_FLEX_SR");
+
+                public static String getGameType(int qtype){
+                        return gameType.get(qtype);
+                }
+        }
 }
