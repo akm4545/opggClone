@@ -51,6 +51,7 @@ public class UtilController {
             endIndex = html.indexOf("style=\"", startIndex);
 
             if(endIndex == -1){
+                convertHtmlString += html.substring(startIndex);
                 break;
             }
 
@@ -64,9 +65,9 @@ public class UtilController {
             String convertTargetHtml = html.substring(startIndex, endIndex);
             convertTargetHtml = "{{" + convertTargetHtml + "}}";
             convertTargetHtml = convertTargetHtml.replaceAll("\"", "");
-            convertTargetHtml = convertTargetHtml.replaceAll(":", ":\"");
+            convertTargetHtml = convertTargetHtml.replaceAll(": ", ":\"");
             convertTargetHtml = convertTargetHtml.replaceAll(";", "\",");
-            convertTargetHtml = convertTargetHtml.replaceAll(" ", "");
+            //convertTargetHtml = convertTargetHtml.replaceAll(" ", "");
 
             convertHtmlString += convertTargetHtml;
 
