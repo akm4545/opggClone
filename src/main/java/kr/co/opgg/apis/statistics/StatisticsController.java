@@ -18,17 +18,17 @@ public class StatisticsController {
 
     private final StatisticsService statisticsService;
 
-    @GetMapping(value = "/list")
-    public ResponseEntity<ListResult<StatisticsResponse>> selectStaticsList(StatisticsRequest statisticsRequest, BindingResult bindingResult){
-        ValidateUtil.validateBindingResult(bindingResult);
-        //챔피언별 통계 or 티어별 통계
-        //큐타입 솔랭 자랭 칼바람 우르프
-        //리그 => 티어
-        //게임 진행시간
-        //포지션
-        //처음부터 끝까지 챔피언 다보여주기
-
-        ListResult<StatisticsResponse> statistics = statisticsService.selectStatistics(statisticsRequest);
-        return null;
-    }
+//    @GetMapping(value = "/list")
+//    public ResponseEntity<ListResult<StatisticsResponse>> selectStaticsList(StatisticsRequest statisticsRequest, BindingResult bindingResult){
+//        ValidateUtil.validateBindingResult(bindingResult);
+//        //챔피언별 통계 or 티어별 통계
+//        //큐타입 솔랭 자랭 칼바람 우르프
+//        //리그 => 티어
+//        //게임 진행시간
+//        //포지션
+//        //처음부터 끝까지 챔피언 다보여주기
+//
+//        ListResult<StatisticsResponse> statistics = statisticsService.selectStatistics(statisticsRequest);
+//        return null;
+//    }
 }

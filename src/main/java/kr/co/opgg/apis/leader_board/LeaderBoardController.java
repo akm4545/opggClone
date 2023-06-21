@@ -225,6 +225,8 @@ public class LeaderBoardController {
     public ResponseEntity<SingleResult<LeaderBoardResponse.LeaderBoardPageDto>> userNameSearch(String userName){
         Boolean findSw = false;
 
+        System.out.println(userName);
+
         for(int i=0; i<leaderBoardPageList.size(); i++){
             List<LeaderBoardResponse.LeaderBoardItemDto> leaderBoardItemList = leaderBoardPageList.get(i).getLeaderBoardList();
 
@@ -233,6 +235,8 @@ public class LeaderBoardController {
 
                 if(userName.equals(searchTargetName)){
                     findSw = true;
+
+                    leaderBoardPageList.get(i).setSearch(searchTargetName);
 
                     break;
                 }

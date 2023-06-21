@@ -29,6 +29,8 @@ public class LeaderBoardResponse {
     public static class LeaderBoardPageDto{
         private Integer page;
 
+        private String search;
+
         private List<LeaderBoardItemDto> leaderBoardList;
     }
 }
