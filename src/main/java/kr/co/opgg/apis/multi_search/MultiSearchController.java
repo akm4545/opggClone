@@ -1,9 +1,8 @@
-package kr.co.opgg.apis.mulri_search;
+package kr.co.opgg.apis.multi_search;
 
 import kr.co.opgg.apis.common.ResponseService;
 import kr.co.opgg.apis.common.dto.ListResult;
-import kr.co.opgg.apis.leader_board.dto.LeaderBoardResponse;
-import kr.co.opgg.apis.mulri_search.dto.MultiSearchResponse;
+import kr.co.opgg.apis.multi_search.dto.MultiSearchResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -42,31 +41,55 @@ public class MultiSearchController {
     public ResponseEntity<ListResult> selectMultiSearchList(String summonerName){
         List<MultiSearchResponse.SummonerNameDto> summonerNameDtoList = getSummonerList(summonerName);
         List<MultiSearchResponse.LeagueInfoDto> leagueInfoDtoList = getLeagueInfoList(summonerNameDtoList);
+        String gameEndTimeStamp = "";
 
-        for(MultiSearchResponse.SummonerNameDto summonerNameDto : summonerNameDtoList){
+        List<MultiSearchResponse.SelectMultiSearchListDto> multiSearchList = new ArrayList<MultiSearchResponse.SelectMultiSearchListDto>();
+
+        for(int i=0; i<summonerNameDtoList.size(); i++){
+            MultiSearchResponse.SummonerNameDto summonerNameDto = summonerNameDtoList.get(i);
+            MultiSearchResponse.LeagueInfoDto leagueInfoDto = leagueInfoDtoList.get(i);
+
             List<String> matchIdList = new ArrayList<String>();
             matchIdList = getMatchIdList(summonerNameDto);
 
-
             List<MultiSearchResponse.MatchInfoDto> matchInfoDtoList = getMatchInfoList(matchIdList);
+            List<MultiSearchResponse.MatchInfoDto> matchInfoListByPuuId = new ArrayList<MultiSearchResponse.MatchInfoDto>();
 
-            for(int i=0; i<10; i++){
-                Integer endIndex = (i + 1) * 10 - 1;
+            Integer startIndex = 0;
+            Integer endIndex = 0;
 
-                //10개씩 나눠서 = 1게임
-                List<MultiSearchResponse.MatchInfoDto> gameByMatchInfoList = matchInfoDtoList.subList(i, endIndex);
+            for(int j=0; j<10; j++){
+                endIndex = (j + 1) * 10 - 1;
 
+                List<MultiSearchResponse.MatchInfoDto> gameByMatchInfoList = matchInfoDtoList.subList(startIndex, endIndex);
 
+                gameEndTimeStamp = gameByMatchInfoList.get(endIndex).getGameEndTimestamp();
+                gameByMatchInfoList = multiSearchService.setAce(gameByMatchInfoList);
+                MultiSearchResponse.MatchInfoDto puuIdFilterDto = multiSearchService.puuidFilter(gameByMatchInfoList, summonerNameDto);
+
+                matchInfoListByPuuId.add(puuIdFilterDto);
+
+                startIndex = endIndex + 1;
             }
 
+            MultiSearchResponse.LaneTotalInfoDto lane = multiSearchService.getLane(matchInfoListByPuuId);
 
-            //10개 kda 계산 킬과 어시스트를 합하고 데스로 나눠 계산합니다.
-            //자신의 puuid 찾기 자기 자신이 가장 높다면 ace 추가
+            MultiSearchResponse.SelectMultiSearchListDto multiSearchDto = MultiSearchResponse.SelectMultiSearchListDto.builder()
+                    .name(summonerNameDto.getName())
+                    .rank(leagueInfoDto.getRank())
+                    .tier(leagueInfoDto.getTier())
+                    .leaguePoints(leagueInfoDto.getLeaguePoints())
+                    .wins(leagueInfoDto.getWins())
+                    .losses(leagueInfoDto.getLosses())
+                    .gameEndTimeStamp(gameEndTimeStamp)
+                    .laneInfo(lane)
+                    .gameList(matchInfoListByPuuId)
+                    .build();
+
+            multiSearchList.add(multiSearchDto);
         }
-        
-        //자신의 10 게임의 포지션 평균을 구해 가장 높으 포지션을 주 포지션으로 전달
-        
-        return ResponseEntity.ok(responseService.getListResult(null));
+
+        return ResponseEntity.ok(responseService.getListResult(multiSearchList));
     }
 
     private List<MultiSearchResponse.SummonerNameDto> getSummonerList(String summonerName){
@@ -136,9 +159,5 @@ public class MultiSearchController {
         }
 
         return matchInfoList;
-    }
-
-    private List<MultiSearchResponse.MatchInfoDto> setAce(List<MultiSearchResponse.MatchInfoDto> matchInfoDtoList){
-        return matchInfoDtoList;
     }
 }

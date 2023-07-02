@@ -1,6 +1,9 @@
-package kr.co.opgg.apis.mulri_search.dto;
+package kr.co.opgg.apis.multi_search.dto;
 
+import lombok.Builder;
 import lombok.Data;
+
+import java.util.List;
 
 public class MultiSearchResponse {
 
@@ -45,9 +48,16 @@ public class MultiSearchResponse {
         private Integer deaths;
 
         private Boolean ace;
+
+        private Double kda;
+
+        private Boolean win;
+
+        private String gameEndTimestamp;
     }
 
     @Data
+    @Builder
     public static class SelectMultiSearchListDto{
         private String name;
 
@@ -60,5 +70,31 @@ public class MultiSearchResponse {
         private String wins;
 
         private String losses;
+
+        private String lane;
+
+        private String gameStartDate;
+
+        private List<MatchInfoDto> gameList;
+
+        private LaneTotalInfoDto laneInfo;
+
+        private String gameEndTimeStamp;
+    }
+
+    @Data
+    @Builder
+    public static class LaneInfoDto{
+        private String lane;
+
+        private Integer winCount;
+    }
+
+    @Data
+    @Builder
+    public static class LaneTotalInfoDto{
+        private LaneInfoDto lane;
+
+        private LaneInfoDto subLane;
     }
 }
