@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MultiSearchService {
@@ -26,26 +27,32 @@ public class MultiSearchService {
         return summonerNameArray;
     }
 
-    public List<MultiSearchResponse.MatchInfoDto> setAce(List<MultiSearchResponse.MatchInfoDto> matchInfoDtoList){
-        for(int i=0; i<matchInfoDtoList.size(); i++){
-            MultiSearchResponse.MatchInfoDto matchInfoDto = matchInfoDtoList.get(i);
+    public List<MultiSearchResponse.ParticipantsDto> setAce(List<MultiSearchResponse.ParticipantsDto> participantsDtoList){
+        for(int i=0; i<participantsDtoList.size(); i++){
+            MultiSearchResponse.ParticipantsDto participantsDto = participantsDtoList.get(i);
 
-            Integer kill = matchInfoDto.getKills();
-            Integer death = matchInfoDto.getDeaths();
-            Integer assists = matchInfoDto.getAssists();
+            Integer kill = participantsDto.getKills();
+            Integer death = participantsDto.getDeaths();
+            Integer assists = participantsDto.getAssists();
 
-            Double kda = ((kill + assists) / death + 0d);
+            Double kda = 0D;
 
-            matchInfoDto.setKda(kda);
+            if(death == 0){
+                kda = kill + assists + 0D;
+            }else{
+                kda = ((kill + assists) / (death + 0d));
+            }
+
+            participantsDto.setKda(kda);
         }
 
-        matchInfoDtoList.stream().sorted(Comparator.comparing(MultiSearchResponse.MatchInfoDto::getKda));
-        matchInfoDtoList.get(matchInfoDtoList.size() - 1).setAce(true);
+        participantsDtoList = participantsDtoList.stream().sorted(Comparator.comparing(MultiSearchResponse.ParticipantsDto::getKda)).collect(Collectors.toList());
+        participantsDtoList.get(participantsDtoList.size() - 1).setAce(true);
 
-        return matchInfoDtoList;
+        return participantsDtoList;
     }
 
-    public MultiSearchResponse.LaneTotalInfoDto getLane(List<MultiSearchResponse.MatchInfoDto> matchInfoListByPuuId) {
+    public MultiSearchResponse.LaneTotalInfoDto getLane(List<MultiSearchResponse.ParticipantsDto> matchInfoListByPuuId) {
         Map<String, Integer> laneMap = new HashMap<String, Integer>();
 
         matchInfoListByPuuId.forEach(matchInfoDto -> {
@@ -78,7 +85,7 @@ public class MultiSearchService {
                 .build();
     }
 
-    public MultiSearchResponse.MatchInfoDto puuidFilter(List<MultiSearchResponse.MatchInfoDto> gameByMatchInfoList, MultiSearchResponse.SummonerNameDto summonerNameDto) {
+    public MultiSearchResponse.ParticipantsDto puuidFilter(List<MultiSearchResponse.ParticipantsDto> gameByMatchInfoList, MultiSearchResponse.SummonerNameDto summonerNameDto) {
         String puuId = summonerNameDto.getPuuid();
 
         return gameByMatchInfoList.stream().filter(match -> {

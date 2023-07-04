@@ -4,6 +4,7 @@ import kr.co.opgg.apis.common.ResponseService;
 import kr.co.opgg.apis.common.dto.ListResult;
 import kr.co.opgg.apis.multi_search.dto.MultiSearchResponse;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
@@ -17,15 +18,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@AllArgsConstructor
-@RequestMapping("/")
+@RequiredArgsConstructor
+@RequestMapping("/multiSearch")
 public class MultiSearchController {
 
     private final MultiSearchService multiSearchService;
 
     private final ResponseService responseService;
 
-    @Value("${lol.leaderboard}")
+    @Value("${lol.summoner}")
     private String summonerNameURL;
 
     @Value("${lol.league}")
@@ -53,23 +54,17 @@ public class MultiSearchController {
             matchIdList = getMatchIdList(summonerNameDto);
 
             List<MultiSearchResponse.MatchInfoDto> matchInfoDtoList = getMatchInfoList(matchIdList);
-            List<MultiSearchResponse.MatchInfoDto> matchInfoListByPuuId = new ArrayList<MultiSearchResponse.MatchInfoDto>();
+            List<MultiSearchResponse.ParticipantsDto> matchInfoListByPuuId = new ArrayList<MultiSearchResponse.ParticipantsDto>();
 
-            Integer startIndex = 0;
-            Integer endIndex = 0;
+            for(int j=0; j<matchInfoDtoList.size(); j++){
+                MultiSearchResponse.MatchInfoDto matchInfoDto = matchInfoDtoList.get(j);
+                List<MultiSearchResponse.ParticipantsDto> gameByMatchInfoList = matchInfoDto.getInfo().getParticipants();
 
-            for(int j=0; j<10; j++){
-                endIndex = (j + 1) * 10 - 1;
-
-                List<MultiSearchResponse.MatchInfoDto> gameByMatchInfoList = matchInfoDtoList.subList(startIndex, endIndex);
-
-                gameEndTimeStamp = gameByMatchInfoList.get(endIndex).getGameEndTimestamp();
+                gameEndTimeStamp = matchInfoDto.getInfo().getGameEndTimestamp();
                 gameByMatchInfoList = multiSearchService.setAce(gameByMatchInfoList);
-                MultiSearchResponse.MatchInfoDto puuIdFilterDto = multiSearchService.puuidFilter(gameByMatchInfoList, summonerNameDto);
+                MultiSearchResponse.ParticipantsDto puuIdFilterDto = multiSearchService.puuidFilter(gameByMatchInfoList, summonerNameDto);
 
                 matchInfoListByPuuId.add(puuIdFilterDto);
-
-                startIndex = endIndex + 1;
             }
 
             MultiSearchResponse.LaneTotalInfoDto lane = multiSearchService.getLane(matchInfoListByPuuId);
@@ -88,6 +83,8 @@ public class MultiSearchController {
 
             multiSearchList.add(multiSearchDto);
         }
+
+        System.out.println(multiSearchList.toString());
 
         return ResponseEntity.ok(responseService.getListResult(multiSearchList));
     }
@@ -116,12 +113,12 @@ public class MultiSearchController {
         List<MultiSearchResponse.LeagueInfoDto> leagueInfoDtoList = new ArrayList<MultiSearchResponse.LeagueInfoDto>();
 
         for (MultiSearchResponse.SummonerNameDto summoner :summonerNameDtoList){
-            MultiSearchResponse.LeagueInfoDto leagueInfoDto = (MultiSearchResponse.LeagueInfoDto) webClient.get()
-                    .uri(summoner.getPuuid() + "?api_key=" + apiKey)
+            MultiSearchResponse.LeagueInfoDto leagueInfoDto = ((List<MultiSearchResponse.LeagueInfoDto>) webClient.get()
+                    .uri(summoner.getId() + "?api_key=" + apiKey)
                     .accept(MediaType.APPLICATION_JSON)
                     .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<MultiSearchResponse.LeagueInfoDto>() {})
-                    .block();
+                    .bodyToMono(new ParameterizedTypeReference<List<MultiSearchResponse.LeagueInfoDto>>() {})
+                    .block()).get(0);
 
             leagueInfoDtoList.add(leagueInfoDto);
         }
@@ -134,7 +131,7 @@ public class MultiSearchController {
         List<String> matchIdList = new ArrayList<String>();
 
         matchIdList = (List<String>) webClient.get()
-                .uri("by-puuid" + summonerNameDto.getPuuid() + "/ids?start=0&count=10&&api_key=" + apiKey)
+                .uri("by-puuid/" + summonerNameDto.getPuuid() + "/ids?start=0&count=10&&api_key=" + apiKey)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<String>>() {})
@@ -148,14 +145,14 @@ public class MultiSearchController {
         List<MultiSearchResponse.MatchInfoDto> matchInfoList = new ArrayList<MultiSearchResponse.MatchInfoDto>();
 
         for(String matchId : matchIdList){
-            List<MultiSearchResponse.MatchInfoDto> matchInfoAddList = (List<MultiSearchResponse.MatchInfoDto>) webClient.get()
+            MultiSearchResponse.MatchInfoDto matchInfoDto = (MultiSearchResponse.MatchInfoDto) webClient.get()
                     .uri(matchId + "?api_key=" + apiKey)
                     .accept(MediaType.APPLICATION_JSON)
                     .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<List<MultiSearchResponse.MatchInfoDto>>() {})
+                    .bodyToMono(new ParameterizedTypeReference<MultiSearchResponse.MatchInfoDto>() {})
                     .block();
 
-            matchInfoList.addAll(matchInfoAddList);
+            matchInfoList.add(matchInfoDto);
         }
 
         return matchInfoList;

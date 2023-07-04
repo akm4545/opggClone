@@ -2,6 +2,7 @@ package kr.co.opgg.apis.multi_search.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -33,6 +34,18 @@ public class MultiSearchResponse {
 
     @Data
     public static class MatchInfoDto{
+        private InfoDto info;
+    }
+
+    @Data
+    public static class InfoDto{
+        private String gameEndTimestamp;
+
+        private List<ParticipantsDto> participants;
+    }
+
+    @Data
+    public static class ParticipantsDto{
         private String championName;
 
         private String championId;
@@ -52,12 +65,11 @@ public class MultiSearchResponse {
         private Double kda;
 
         private Boolean win;
-
-        private String gameEndTimestamp;
     }
 
     @Data
     @Builder
+    @ToString
     public static class SelectMultiSearchListDto{
         private String name;
 
@@ -75,7 +87,7 @@ public class MultiSearchResponse {
 
         private String gameStartDate;
 
-        private List<MatchInfoDto> gameList;
+        private List<MultiSearchResponse.ParticipantsDto> gameList;
 
         private LaneTotalInfoDto laneInfo;
 
