@@ -41,7 +41,7 @@ public class SummonerResponse {
     @Getter
     @ToString
     public static class Match{
-        private MetaData metadata;
+//        private MetaData metadata;
         private Info info;
         private Match summonerMatch;
     }
@@ -57,6 +57,10 @@ public class SummonerResponse {
     @ToString
     public static class Info{
         private List<MatchParticipant> participants;
+        private Long gameCreation;
+        private Long gameDuration;
+        private String gameMode;
+        private String gameType;
     }
 
     @Getter
@@ -82,6 +86,11 @@ public class SummonerResponse {
         private int summonerLevel;
         private int summoner1Id; //스펠
         private int summoner2Id; //스펠
+        private String teamPosition;
+        private int totalDamageDealt;
+        private int wardsKilled;
+        private int wardsPlaced;
+        private String lane;
     }
 
     @Getter
@@ -91,10 +100,13 @@ public class SummonerResponse {
 
         private List<Map<String, MatchParticipant>> summonerMatches = new ArrayList<>();
 
+        private List<Integer> totalKills = new ArrayList<>();
+
         @Builder
-        public MatchResult(List<Match> matches, List<Map<String, MatchParticipant>> summonerMatches){
+        public MatchResult(List<Match> matches, List<Map<String, MatchParticipant>> summonerMatches, List<Integer> totalKills){
             this.matches.addAll(matches);
             this.summonerMatches.addAll(summonerMatches);
+            this.totalKills.addAll(totalKills);
         }
     }
 }

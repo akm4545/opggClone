@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.reducing;
 import static kr.co.opgg.apis.summoner.dto.SummonerResponse.*;
 
 
@@ -69,9 +70,12 @@ public class SummonerController {
                                         .collect(Collectors.toMap(e -> "summoner", e -> e))
                 ).collect(Collectors.toList());
 
+        List<Integer> totalKills = matchParticipants.stream()
+                .map(match -> match.getInfo().getParticipants().stream()
+                        .collect(reducing(0, MatchParticipant::getKills, (i, j) -> i + j)))
+                .collect(Collectors.toList());
 
-
-        MatchResult matchResult = MatchResult.builder().matches(matchParticipants).summonerMatches(summonerMatches).build();
+        MatchResult matchResult = MatchResult.builder().matches(matchParticipants).summonerMatches(summonerMatches).totalKills(totalKills).build();
 
         return ResponseEntity.ok(responseService.getSingleResult(matchResult));
     }
