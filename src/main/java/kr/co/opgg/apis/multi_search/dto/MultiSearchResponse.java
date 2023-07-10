@@ -100,6 +100,8 @@ public class MultiSearchResponse {
         private String lane;
 
         private Integer winCount;
+
+        private Integer playCount;
     }
 
     @Data

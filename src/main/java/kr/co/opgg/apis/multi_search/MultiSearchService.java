@@ -61,6 +61,9 @@ public class MultiSearchService {
             Integer count = 1;
             Integer winCount = 0;
 
+            System.out.println(matchInfoDto.getWin());
+            System.out.println(matchInfoDto.getLane());
+
             if(matchInfoDto.getWin()){
                 winCount = 1;
             }
@@ -75,8 +78,11 @@ public class MultiSearchService {
             laneMap.put(laneWinCountKey, winCount);
         });
 
+        System.out.println(laneMap);
+
         MultiSearchResponse.LaneInfoDto laneInfoDto = maxCountLaneSearch(laneMap);
         laneMap.remove(laneInfoDto.getLane());
+        laneMap.remove(laneInfoDto.getLane() + "winCount");
         MultiSearchResponse.LaneInfoDto subLaneInfoDto = maxCountLaneSearch(laneMap);
 
         return MultiSearchResponse.LaneTotalInfoDto.builder()
@@ -100,6 +106,10 @@ public class MultiSearchService {
         String lane = "";
 
         for (String key : keySet){
+            if(key.contains("winCount")){
+                continue;
+            }
+
             String laneWinCountKey = key + "winCount";
             Integer laneCount = laneMap.get(key);
 
@@ -113,6 +123,7 @@ public class MultiSearchService {
         return MultiSearchResponse.LaneInfoDto.builder()
                 .lane(lane)
                 .winCount(winCount)
+                .playCount(maxCount)
                 .build();
     }
 }
