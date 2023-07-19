@@ -70,12 +70,13 @@ public class SummonerController {
                                         .collect(Collectors.toMap(e -> "summoner", e -> e))
                 ).collect(Collectors.toList());
 
-        List<Integer> totalKills = matchParticipants.stream()
-                .map(match -> match.getInfo().getParticipants().stream()
-                        .collect(reducing(0, MatchParticipant::getKills, (i, j) -> i + j)))
-                .collect(Collectors.toList());
+//        List<Integer> totalKills = matchParticipants.stream()
+////                .map(match -> match.getInfo().getParticipants().stream().map(MatchParticipant::getKills).reduce(0, (i, j) -> i + j))
+//                .map(match -> match.getInfo().getParticipants().stream().map(MatchParticipant::getKills).reduce(0, (i, j) -> i + j))
+//                .collect(Collectors.toList());
 
-        MatchResult matchResult = MatchResult.builder().matches(matchParticipants).summonerMatches(summonerMatches).totalKills(totalKills).build();
+
+        MatchResult matchResult = MatchResult.builder().matches(matchParticipants).summonerMatches(summonerMatches).build();
 
         return ResponseEntity.ok(responseService.getSingleResult(matchResult));
     }

@@ -41,9 +41,7 @@ public class SummonerResponse {
     @Getter
     @ToString
     public static class Match{
-//        private MetaData metadata;
         private Info info;
-        private Match summonerMatch;
     }
 
     @Getter
@@ -106,7 +104,7 @@ public class SummonerResponse {
         public MatchResult(List<Match> matches, List<Map<String, MatchParticipant>> summonerMatches, List<Integer> totalKills){
             this.matches.addAll(matches);
             this.summonerMatches.addAll(summonerMatches);
-            this.totalKills.addAll(totalKills);
+//            this.totalKills.addAll(totalKills);
         }
     }
 }
