@@ -62,7 +62,9 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: root
-          key: ${{ secrets.KEY }}
+          passowrd: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          ##key: ${{ secrets.KEY }}
           script: |
             sudo docker stop opgg
             sudo docker rm -f opgg
