@@ -64,7 +64,8 @@ jobs:
           username: root
           key: ${{ secrets.KEY }}
           script: |
-            sudo docker rm -f $(docker ps -qa)
+            sudo docker stop opgg
+            sudo docker rm -f opgg
             sudo docker pull ${{ secrets.DOCKER_REPO }}/opgg
             docker-compose up -d
             docker image prune -f
