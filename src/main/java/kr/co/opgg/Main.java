@@ -12,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableScheduling
 @SpringBootApplication
 public class Main {
-    //배포 테스트4
+    //배포 테스트5
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
     }
