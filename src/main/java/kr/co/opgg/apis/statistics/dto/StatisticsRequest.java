@@ -24,10 +24,10 @@ public class StatisticsRequest {
         private int qType;
 
         @NotBlank
-        private int tier;
+        private String tier;
 
         @NotBlank
-        private int division;
+        private String division;
 
         //게임 진행시간
         @NotBlank
@@ -35,7 +35,14 @@ public class StatisticsRequest {
 
         private String position;
 
+        private String baseURL;
+
+        private String requestURL;
+
+        private String reqType;
+
         public static class GameTypeDto {
+
                 private static List<String> gameType = List.of("RANKED_SOLO_5x5", "RANKED_FLEX_SR");
 
                 public static String getGameType(int qtype){
