@@ -1,9 +1,6 @@
 package kr.co.opgg.common.common_dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 
 public class WebClientDto {
@@ -12,16 +9,10 @@ public class WebClientDto {
     @Getter
     @ToString
     public static class BasicDto{
-        private String baseURL;
-
-        private String reqType;
-
         private String contentType;
 
         @Builder
         public BasicDto(String baseURL, String reqType, String contentType){
-            this.baseURL = baseURL;
-            this.reqType = reqType;
             this.contentType = contentType;
         }
     }
@@ -29,10 +20,23 @@ public class WebClientDto {
     @Getter
     @Setter
     @ToString
+    @NoArgsConstructor
     public static class ReqWebClientDto{
         private String requestURL;
 
+        private String baseURL;
+
         private BasicDto basicDto;
+
+        private String reqType;
+
+        @Builder
+        public ReqWebClientDto(String requestURL, String baseURL, String reqType, BasicDto basicDto){
+            this.requestURL = requestURL;
+            this.baseURL = baseURL;
+            this.basicDto = basicDto;
+            this.reqType = reqType;
+        }
     }
 
 }

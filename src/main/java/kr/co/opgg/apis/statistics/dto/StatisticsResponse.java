@@ -7,8 +7,19 @@ import lombok.ToString;
 import java.util.List;
 import java.util.Set;
 
+@Data
 public class StatisticsResponse {
+    private LeagueListDto leagueListDto;
 
+    @Data
+    public static class LeagueListDto{
+        private String leagueId;
+        private List<LeagueEntryDto> entries;
+        private String tier;
+        private String name;
+        private String queue;
+
+    }
     @Data
     public static class LeagueEntryDto{
         private String leagueId;
