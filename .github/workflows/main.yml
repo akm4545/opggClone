@@ -69,5 +69,8 @@ jobs:
             sudo docker stop opgg
             sudo docker rm -f opgg
             sudo docker pull ${{ secrets.DOCKER_REPO }}/opgg
+            cd ../
+            cd var/
+            cd opgg_api/
             docker-compose up -d
             docker image prune -f
