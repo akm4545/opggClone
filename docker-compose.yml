@@ -4,5 +4,10 @@ services:
     image: akm4545/opgg
     restart: always
     ports:
-      - 8000:8000
+      - "8000:8000"
     container_name: opgg
+    networks:
+      - opgg-network
+networks:
+  opgg-network:
+    external: true
