@@ -68,25 +68,28 @@ public class StatisticsService {
 //        return null;
 //    }
 //
-//    public WebClient statisticsWebClient(WebClientDto.BasicDto webClientDto){
-//        return WebClient.builder()
-//                .defaultHeader("Content-type", "application/x-www-form-urlencoded;charset=utf-8")
-//                .baseUrl(webClientDto.getBaseURL())
-//                .build();
-//    }
+
+    public void getStatisticsList () {
+
+    }
+    public WebClient statisticsWebClient(WebClientDto.ReqWebClientDto webClientDto){
+        return WebClient.builder()
+                .defaultHeader("Content-type", "application/x-www-form-urlencoded;charset=utf-8")
+                .baseUrl(webClientDto.getBaseURL())
+                .build();
+    }
 //
-//    public String selectTier(WebClientDto.ReqWebClientDto webClientDto){
-//        StatisticsResponse.LeagueEntryDto[] block = statisticsWebClient(webClientDto.getBasicDto()).get()
-//                .uri(webClientDto.getRequestURL())
-//                .accept(MediaType.APPLICATION_JSON)
-//                .retrieve()
-//                .bodyToMono(StatisticsResponse.LeagueEntryDto[].class)
-//                .block();
-//
-//        for(StatisticsResponse.LeagueEntryDto entry : block){
-//            System.out.println("entry = " + entry);
-//        }
-//
-//        return null;
-//    }
+    public Object selectTier(WebClientDto.ReqWebClientDto webClientDto){
+        Map<String, Class> map = Map.of(
+            "highTier", StatisticsResponse.LeagueListDto.class,
+            "lowTier", StatisticsResponse.LeagueEntryDto[].class
+        );
+
+        return statisticsWebClient(webClientDto).get()
+                .uri(webClientDto.getRequestURL())
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(map.get(webClientDto.getReqType()))
+                .block();
+    }
 }
