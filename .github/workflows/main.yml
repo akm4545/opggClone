@@ -74,3 +74,4 @@ jobs:
             cd opgg_api/
             docker-compose up -d
             docker image prune -f
+            echo "${{ secrets.DATABASE }}" >> ./application.yml
