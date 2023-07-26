@@ -6,6 +6,17 @@ services:
     ports:
       - "8000:8000"
     container_name: opgg
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 1
+        order: start-first
+        monitor: 90s
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
+        order: start-first
+        failure_action: continue
     networks:
       - opgg-network
 networks:
