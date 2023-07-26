@@ -10,8 +10,6 @@ name: Java CI with Gradle
 on:
   push:
     branches: [ "test" ]
-  pull_request:
-    branches: [ "test" ]
 
 permissions:
   contents: read
@@ -66,12 +64,12 @@ jobs:
           port: ${{ secrets.PORT }}
           ##key: ${{ secrets.KEY }}
           script: |
-            sudo docker stop opgg
-            sudo docker rm -f opgg
+            ## sudo docker stop opgg
+            ## sudo docker rm -f opgg
             sudo docker pull ${{ secrets.DOCKER_REPO }}/opgg
             cd ../
             cd var/
             cd opgg_api/
-            docker-compose up -d
+            ## docker-compose up -d
+            docker stack deploy -c docker-compose.yml opgg-swarm
             docker image prune -f
-            echo "${{ secrets.DATABASE }}" >> ./application.yml
